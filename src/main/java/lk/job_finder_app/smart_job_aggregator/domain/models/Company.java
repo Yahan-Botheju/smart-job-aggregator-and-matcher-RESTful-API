@@ -31,4 +31,9 @@ public class Company {
     public BigDecimal getCompanyRating() {
         return companyRating;
     }
+
+    /* __CREATE_STATIC_METHOD__ */
+    public static Company createCompany(String companyName, String companyIndustry, BigDecimal companyRating) {
+        return new Company(null, companyName, companyIndustry, companyRating);
+    }
 }
