@@ -1,16 +1,10 @@
 package lk.job_finder_app.smart_job_aggregator.domain.models;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.ApplicationStatus;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class JobApplication {
     private Long jobApplicationId;
     private String resumeUrl;
@@ -21,6 +15,49 @@ public class JobApplication {
     private Long userId;
     private Long jobPostId;
     private Long companyId;
+
+    public JobApplication(Long jobApplicationId, String resumeUrl, double matchScore, ApplicationStatus applicationStatus, LocalDateTime appliedAt, Long userId, Long jobPostId, Long companyId) {
+        this.jobApplicationId = jobApplicationId;
+        this.resumeUrl = resumeUrl;
+        this.matchScore = matchScore;
+        this.applicationStatus = applicationStatus;
+        this.appliedAt = appliedAt;
+        this.userId = userId;
+        this.jobPostId = jobPostId;
+        this.companyId = companyId;
+    }
+
+    public Long getJobApplicationId() {
+        return jobApplicationId;
+    }
+
+    public String getResumeUrl() {
+        return resumeUrl;
+    }
+
+    public double getMatchScore() {
+        return matchScore;
+    }
+
+    public ApplicationStatus getApplicationStatus() {
+        return applicationStatus;
+    }
+
+    public LocalDateTime getAppliedAt() {
+        return appliedAt;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public Long getJobPostId() {
+        return jobPostId;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
 
     //job application default status
     public void jobApplicationDefaultStatus() {
