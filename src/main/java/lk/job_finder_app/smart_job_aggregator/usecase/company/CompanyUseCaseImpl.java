@@ -2,6 +2,8 @@ package lk.job_finder_app.smart_job_aggregator.usecase.company;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.Company;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.CompanyRepository;
+import lk.job_finder_app.smart_job_aggregator.usecase.company.records.CreateCompanyCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.company.records.CreateCompanyResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -29,8 +31,31 @@ public class CompanyUseCaseImpl implements CompanyUseCase {
 
     //create company
     @Override
-    public Company createCompany(Company company){
-        return companyRepository.createCompany(company);
+    public CreateCompanyResult createCompany(CreateCompanyCommand createCompanyCommand){
+        //validate incoming fields
+        if(createCompanyCommand.companyIndustry() == null
+                || createCompanyCommand.companyIndustry().isEmpty()
+                || createCompanyCommand.companyRating() == null
+                || createCompanyCommand.companyName() == null
+                || createCompanyCommand.companyName().isEmpty()
+        ){
+            throw new IllegalArgumentException("Required parameters cannot be empty");
+        }
+        //create model
+        Company createNewCompany = Company.createCompany(
+                createCompanyCommand.companyName(),
+                createCompanyCommand.companyIndustry(),
+                createCompanyCommand.companyRating()
+        );
+
+        Company savedCompany = companyRepository.createCompany(createNewCompany);
+
+        return new  CreateCompanyResult(
+                savedCompany.getCompanyId().toString(),
+                savedCompany.getCompanyName(),
+                savedCompany.getCompanyIndustry(),
+                savedCompany.getCompanyRating().toString()
+        );
     }
 
     //update company
