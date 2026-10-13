@@ -1,13 +1,14 @@
 package lk.job_finder_app.smart_job_aggregator.usecase.company;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.Company;
+import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
 
 import java.util.List;
 
 public interface CompanyUseCase {
 
     //get all companies
-    List<Company> getAllCompanies();
+    List<GetAllCompaniesResult> getAllCompanies();
 
     //create company
     Company createCompany(Company company);
