@@ -33,7 +33,7 @@ public interface CompanyWebMapper {
     /* __UPDATE_COMPANY__ */
 
     //to command
-    UpdateCompanyCommand toUpdateCompanyCommand(UpdateCompanyRequestDTO updateCompanyRequestDTO);
+    UpdateCompanyCommand toUpdateCompanyCommand(Long companyId, UpdateCompanyRequestDTO updateCompanyRequestDTO);
 
     //to response
     UpdateCompanyResponseDTO toUpdateCompanyResponse(UpdateCompanyResult updateCompanyResult);
