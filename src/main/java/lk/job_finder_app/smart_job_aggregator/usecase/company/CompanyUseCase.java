@@ -1,9 +1,7 @@
 package lk.job_finder_app.smart_job_aggregator.usecase.company;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.Company;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.CreateCompanyCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.CreateCompanyResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.company.records.*;
 
 import java.util.List;
 
@@ -16,7 +14,7 @@ public interface CompanyUseCase {
     CreateCompanyResult createCompany(CreateCompanyCommand createCompanyCommand);
 
     //update company
-    Company updateCompany(Long companyId, Company company);
+    UpdateCompanyResult updateCompany(UpdateCompanyCommand updateCompanyCommand);
 
     //delete company
     void deleteCompany(Long companyId);
