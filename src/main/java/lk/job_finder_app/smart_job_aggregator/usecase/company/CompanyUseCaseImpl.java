@@ -83,11 +83,12 @@ public class CompanyUseCaseImpl implements CompanyUseCase {
     }
 
     //delete company
-    public void deleteCompany(Long companyId){
+    @Override
+    public void deleteCompany(DeleteCompanyCommand deleteCompanyCommand){
         //check availability of company
-        companyRepository.getCompanyById(companyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Company not found" + " " + companyId));
+        companyRepository.getCompanyById(deleteCompanyCommand.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found" + " " + deleteCompanyCommand.companyId()));
         //then delete
-        companyRepository.deleteCompany(companyId);
+        companyRepository.deleteCompany(deleteCompanyCommand.companyId());
     }
 }
