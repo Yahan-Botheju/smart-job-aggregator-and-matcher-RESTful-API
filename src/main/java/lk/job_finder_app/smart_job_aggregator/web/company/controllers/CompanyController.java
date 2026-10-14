@@ -89,7 +89,9 @@ public class CompanyController {
     public ResponseEntity<Void> deleteCompany(
             @PathVariable Long companyId
     ) {
-        companyUseCase.deleteCompany(companyId);
+        DeleteCompanyCommand toCommand = companyWebMapper.toDeleteCompanyCommand(companyId);
+        companyUseCase.deleteCompany(toCommand);
+
         return ResponseEntity.noContent().build();
     }
 
