@@ -36,4 +36,12 @@ public class Company {
     public static Company createCompany(String companyName, String companyIndustry, BigDecimal companyRating) {
         return new Company(null, companyName, companyIndustry, companyRating);
     }
+
+    /* __UPDATE_COMPANY__ */
+
+    public void updateCompany(String companyName, String companyIndustry, BigDecimal companyRating) {
+        this.companyName = companyName;
+        this.companyIndustry = companyIndustry;
+        this.companyRating = companyRating;
+    }
 }
