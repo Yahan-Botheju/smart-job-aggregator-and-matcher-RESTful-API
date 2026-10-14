@@ -42,7 +42,7 @@ public interface CompanyWebMapper {
     /* __DELETE_COMPANY__ */
 
     //to command
-    DeleteCompanyCommand toDeleteCompanyCommand(DeleteCompanyRequestDTO deleteCompanyRequestDTO);
+    DeleteCompanyCommand toDeleteCompanyCommand(Long companyId);
 
 
 }
