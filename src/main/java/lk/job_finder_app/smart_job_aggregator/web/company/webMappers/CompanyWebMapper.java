@@ -39,8 +39,10 @@ public interface CompanyWebMapper {
     UpdateCompanyResponseDTO toUpdateCompanyResponse(UpdateCompanyResult updateCompanyResult);
 
 
+    /* __DELETE_COMPANY__ */
 
-
+    //to command
+    DeleteCompanyCommand toDeleteCompanyCommand(DeleteCompanyRequestDTO deleteCompanyRequestDTO);
 
 
 }
