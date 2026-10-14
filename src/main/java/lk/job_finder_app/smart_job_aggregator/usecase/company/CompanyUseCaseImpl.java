@@ -2,9 +2,7 @@ package lk.job_finder_app.smart_job_aggregator.usecase.company;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.Company;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.CompanyRepository;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.CreateCompanyCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.CreateCompanyResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.company.records.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
@@ -60,12 +58,28 @@ public class CompanyUseCaseImpl implements CompanyUseCase {
 
     //update company
     @Override
-    public Company updateCompany(Long companyId, Company company){
+    public UpdateCompanyResult updateCompany(UpdateCompanyCommand  updateCompanyCommand){
+
         //check company availability by custom method
-        companyRepository.getCompanyById(companyId)
-                .orElseThrow(() -> new ResourceNotFoundException("Company not found" + " " +companyId));
+        Company company = companyRepository.getCompanyById(updateCompanyCommand.companyId())
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found" + " " + updateCompanyCommand.companyId()));
+
+        //update through domain model
+        company.updateCompany(
+                updateCompanyCommand.companyName(),
+                updateCompanyCommand.companyIndustry(),
+                updateCompanyCommand.companyRating()
+        );
+
+        Company savedCompany = companyRepository.updateCompany(company);
+
         //set values to domain repo
-        return companyRepository.updateCompany(companyId, company);
+        return new   UpdateCompanyResult(
+                savedCompany.getCompanyId().toString(),
+                savedCompany.getCompanyName(),
+                savedCompany.getCompanyIndustry(),
+                savedCompany.getCompanyRating().toString()
+        );
     }
 
     //delete company
