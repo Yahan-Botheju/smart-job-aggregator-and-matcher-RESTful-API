@@ -17,7 +17,7 @@ public interface CompanyRepository {
     Company createCompany(Company company);
 
     //update company
-    Company updateCompany(Long companyId, Company company);
+    Company updateCompany(Company company);
 
     //delete company
     void deleteCompany(Long companyId);

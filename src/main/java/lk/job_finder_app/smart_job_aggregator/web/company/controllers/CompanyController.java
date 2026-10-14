@@ -5,9 +5,7 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.Company;
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.company.CompanyUseCase;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.CreateCompanyCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.CreateCompanyResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.company.records.*;
 import lk.job_finder_app.smart_job_aggregator.web.company.DTOs.*;
 import lk.job_finder_app.smart_job_aggregator.web.company.webMappers.CompanyWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
@@ -31,7 +29,7 @@ public class CompanyController {
     //get all companies
     @GetMapping
     @Authorize(RoleName.ADMIN)
-    public ResponseEntity<StandardResponse<List<GetAllCompaniesResponseDTO>>> getAllCompanies(){
+    public ResponseEntity<StandardResponse<List<GetAllCompaniesResponseDTO>>> getAllCompanies() {
 
         List<GetAllCompaniesResult> companies = companyUseCase.getAllCompanies();
         List<GetAllCompaniesResponseDTO> responseDTOS = companies.stream()
@@ -50,8 +48,8 @@ public class CompanyController {
     @PostMapping
     @Authorize(RoleName.ADMIN)
     public ResponseEntity<StandardResponse<CreateCompanyResponseDTO>> createCompany(
-                              @Valid @RequestBody CreateCompanyRequestDTO createCompanyRequestDTO
-    ){
+            @Valid @RequestBody CreateCompanyRequestDTO createCompanyRequestDTO
+    ) {
         CreateCompanyCommand toCommand = companyWebMapper.toCreateCompanyCommand(createCompanyRequestDTO);
         CreateCompanyResult toResult = companyUseCase.createCompany(toCommand);
         CreateCompanyResponseDTO responseDTO = companyWebMapper.toCreateCompanyResponse(toResult);
@@ -68,21 +66,19 @@ public class CompanyController {
     //update company
     @PutMapping("/{companyId}")
     @Authorize(RoleName.ADMIN)
-    public ResponseEntity<StandardResponse<CompanyResponseDTO>> updateCompany(
+    public ResponseEntity<StandardResponse<UpdateCompanyResponseDTO>> updateCompany(
             @PathVariable Long companyId,
-            @Valid @RequestBody CompanyRequestDTO companyRequestDTO
-    ){
-        //create domain model
-        Company toDomainModel = companyWebMapper.toDomainModel(companyRequestDTO);
-
-        //set created domain model and id to usecase
-        Company updatedCompany = companyUseCase.updateCompany(companyId, toDomainModel);
+            @Valid @RequestBody UpdateCompanyRequestDTO updateCompanyRequestDTO
+    ) {
+        UpdateCompanyCommand toCommand = companyWebMapper.toUpdateCompanyCommand(companyId, updateCompanyRequestDTO);
+        UpdateCompanyResult toResult = companyUseCase.updateCompany(toCommand);
+        UpdateCompanyResponseDTO responseDTO = companyWebMapper.toUpdateCompanyResponse(toResult);
 
         return ResponseEntity.ok(new StandardResponse<>(
                 200,
                 "Details updated successfully",
                 LocalDateTime.now(),
-                companyWebMapper.toResponseDTO(updatedCompany)
+                responseDTO
         ));
 
     }
@@ -92,9 +88,11 @@ public class CompanyController {
     @Authorize(RoleName.ADMIN)
     public ResponseEntity<Void> deleteCompany(
             @PathVariable Long companyId
-    ){
-        companyUseCase.deleteCompany(companyId);
-        return  ResponseEntity.noContent().build();
+    ) {
+        DeleteCompanyCommand toCommand = companyWebMapper.toDeleteCompanyCommand(companyId);
+        companyUseCase.deleteCompany(toCommand);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

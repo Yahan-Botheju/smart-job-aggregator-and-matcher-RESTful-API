@@ -50,13 +50,10 @@ public class CompanyRepositoryImpl implements CompanyRepository {
 
     //update company
     @Override
-    public Company updateCompany(Long companyId, Company company){
-        //check company availability in db
-        CompanyEntity companyEntity = jpaCompanyRepository.findById(companyId)
-                .orElseThrow(()-> new ResourceNotFoundException("Company Not Found"));
+    public Company updateCompany(Company company){
 
         //update existing entity
-        CompanyEntity updatedCompanyEntity = companyPersistenceMapper.updateEntityWithNewData(company,companyEntity);
+        CompanyEntity updatedCompanyEntity = companyPersistenceMapper.toEntity(company);
 
         //save in db
         jpaCompanyRepository.save(updatedCompanyEntity);
