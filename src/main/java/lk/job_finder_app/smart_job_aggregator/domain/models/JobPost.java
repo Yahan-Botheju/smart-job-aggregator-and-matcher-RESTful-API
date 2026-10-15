@@ -3,6 +3,10 @@ package lk.job_finder_app.smart_job_aggregator.domain.models;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.JobStatus;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Set;
+
 public class JobPost {
     private Long postId;
     private String postTitle;
