@@ -2,12 +2,13 @@ package lk.job_finder_app.smart_job_aggregator.usecase.jobPost;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPost;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
 
 import java.util.List;
 
 public interface JobPostUseCase {
     //get all job posts
-    List<JobPostWithCompanyAggregate> getAllJobPosts();
+    List<GetAllPostsResult> getAllJobPosts();
 
     //create job post
     JobPostWithCompanyAggregate createJobPost(JobPost jobPost);
