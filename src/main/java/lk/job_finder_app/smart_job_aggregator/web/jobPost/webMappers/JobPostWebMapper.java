@@ -2,7 +2,10 @@ package lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPost;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
+import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.CreateJobPostResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.GetAllPostsResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostRequestDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
@@ -33,4 +36,12 @@ public interface JobPostWebMapper {
     /* __GET_ALL_POSTS__ */
 
     GetAllPostsResponseDTO toGetAllPostsResult(GetAllPostsResult getAllPostsResult);
+
+    /* __CREATE_JOB_POSTS__ */
+
+    //to command
+    CreateJobPostCommand toCreateJobPostCommand(CreateJobPostCommand createJobPostCommand);
+
+    //to response
+    CreateJobPostResponseDTO toCreateJobPostResponseDTO(CreateJobPostResult  createJobPostResult);
 }
