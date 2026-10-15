@@ -10,6 +10,8 @@ import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs.ExternalJobResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.client.TheMuseClient;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.mappers.ExternalJobMapper;
+import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -25,17 +27,9 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //inject job post repo
     private final JobPostRepository jobPostRepository;
-
-    //inject company repo
     private final CompanyRepository companyRepository;
-
-    //inject user repo
     private final UserRepository userRepository;
-
-    //inject muse client
     private final TheMuseClient theMuseClient;
-
-    //inject external job mapper
     private final ExternalJobMapper externalJobMapper;
 
 
@@ -73,12 +67,20 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //get all job posts
     @Override
-    public List<JobPostWithCompanyAggregate> getAllJobPosts(){
+    public List<GetAllPostsResult> getAllJobPosts(){
 
-        return  jobPostRepository.getAllJobPosts().stream().map(jobPost -> {
-            Company company = getCompanyDetailsById(jobPost.getCompanyId());
-            return new JobPostWithCompanyAggregate(jobPost,company);
-        }).toList();
+        List<JobPost> jobPosts = jobPostRepository.getAllJobPosts();
+        return jobPosts.stream()
+                .map(jobPost -> new GetAllPostsResult(
+                        jobPost.getPostId().toString(),
+                        jobPost.getPostTitle(),
+                        jobPost.getPostDescription(),
+                        jobPost.getPostSalary().toString(),
+                        jobPost.getCreatedAt().toString(),
+                        jobPost.getJobStatus().toString(),
+                        jobPost.getSkillsRequired(),
+                        jobPost.getCompanyId().toString()
+                )).toList();
     }
 
     //create job post
