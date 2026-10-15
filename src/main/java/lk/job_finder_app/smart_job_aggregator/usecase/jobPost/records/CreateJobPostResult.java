@@ -1,4 +1,15 @@
 package lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records;
 
-public record CreateJobPostResult() {
+import java.util.Set;
+
+public record CreateJobPostResult(
+        String postId,
+        String postTitle,
+        String postDescription,
+        String postSalary,
+        String createdAt,
+        String jobStatus,
+        Set<String> skillsRequired,
+        String companyId
+) {
 }
