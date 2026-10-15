@@ -4,17 +4,23 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.Company;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPost;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
 import lk.job_finder_app.smart_job_aggregator.domain.models.User;
+import lk.job_finder_app.smart_job_aggregator.domain.models.enums.JobStatus;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.CompanyRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobPostRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs.ExternalJobResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.client.TheMuseClient;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.mappers.ExternalJobMapper;
+import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -25,17 +31,9 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //inject job post repo
     private final JobPostRepository jobPostRepository;
-
-    //inject company repo
     private final CompanyRepository companyRepository;
-
-    //inject user repo
     private final UserRepository userRepository;
-
-    //inject muse client
     private final TheMuseClient theMuseClient;
-
-    //inject external job mapper
     private final ExternalJobMapper externalJobMapper;
 
 
@@ -73,31 +71,54 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //get all job posts
     @Override
-    public List<JobPostWithCompanyAggregate> getAllJobPosts(){
+    public List<GetAllPostsResult> getAllJobPosts(){
 
-        return  jobPostRepository.getAllJobPosts().stream().map(jobPost -> {
-            Company company = getCompanyDetailsById(jobPost.getCompanyId());
-            return new JobPostWithCompanyAggregate(jobPost,company);
-        }).toList();
+        List<JobPost> jobPosts = jobPostRepository.getAllJobPosts();
+        return jobPosts.stream()
+                .map(jobPost -> new GetAllPostsResult(
+                        jobPost.getPostId().toString(),
+                        jobPost.getPostTitle(),
+                        jobPost.getPostDescription(),
+                        jobPost.getPostSalary().toString(),
+                        jobPost.getCreatedAt().toString(),
+                        jobPost.getJobStatus().toString(),
+                        jobPost.getSkillsRequired(),
+                        jobPost.getCompanyId().toString()
+                )).toList();
     }
 
     //create job post
     @Override
-    public JobPostWithCompanyAggregate createJobPost(JobPost jobPost){
+    public CreateJobPostResult createJobPost(CreateJobPostCommand createJobPostCommand){
         //check company availability using helper method
-        Company company = getCompanyDetailsById(jobPost.getCompanyId());
+        Company company = getCompanyDetailsById(createJobPostCommand.companyId());
 
-        //set default job status using domain model method
-        jobPost.setDefaultJobStatus();
+        LocalDate createdAt = LocalDateTime.now();
 
-        //set createdAt
-        jobPost.setCreatedAt(LocalDate.now());
+        JobPost newJobPost = JobPost.createJobPost(
+                createJobPostCommand.postTitle(),
+                createJobPostCommand.postDescription(),
+                createJobPostCommand.postSalary(),
+                createdAt,
+                JobStatus.ACTIVE,
+                createJobPostCommand.skillsRequired(),
+                company.getCompanyId()
+        );
 
         //save new job post in db
-        JobPost savedJobPost = jobPostRepository.createJobPost(jobPost);
+        JobPost savedJobPost = jobPostRepository.createJobPost(newJobPost);
 
         //return both results for response
-        return new JobPostWithCompanyAggregate(savedJobPost, company);
+        return new CreateJobPostResult(
+                savedJobPost.getPostId().toString(),
+                savedJobPost.getPostTitle(),
+                savedJobPost.getPostDescription(),
+                savedJobPost.getPostSalary().toString(),
+                savedJobPost.getCreatedAt().toString(),
+                savedJobPost.getJobStatus().toString(),
+                savedJobPost.getSkillsRequired(),
+                savedJobPost.getCompanyId().toString()
+        );
 
     }
 

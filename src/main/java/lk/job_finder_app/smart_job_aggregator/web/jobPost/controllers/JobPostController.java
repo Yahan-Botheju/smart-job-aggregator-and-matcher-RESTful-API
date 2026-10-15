@@ -6,6 +6,8 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAg
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.JobPostUseCase;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
+import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.GetAllPostsResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostRequestDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers.JobPostWebMapper;
@@ -25,18 +27,16 @@ public class JobPostController {
 
     //inject use case
     private final JobPostUseCase  jobPostUseCase;
-
-    //inject web mapper
     private final JobPostWebMapper jobPostWebMapper;
 
     //get all job posts
     @GetMapping
     @Authorize(RoleName.ADMIN)
-    public ResponseEntity<StandardResponse<List<JobPostResponseDTO>>> getAllJobPosts() {
-        //get all job posts as domain model list
-        List<JobPostWithCompanyAggregate> jobPosts = jobPostUseCase.getAllJobPosts();
+    public ResponseEntity<StandardResponse<List<GetAllPostsResponseDTO>>> getAllJobPosts() {
 
-        List<JobPostResponseDTO> responseDTO = jobPosts.stream().map(jobPostWebMapper::customResponseDTO).toList();
+        List<GetAllPostsResult> allPostsResults = jobPostUseCase.getAllJobPosts();
+        List<GetAllPostsResponseDTO> responseDTO = allPostsResults.stream()
+                .map(jobPostWebMapper::toGetAllPostsResult).toList();
 
         return ResponseEntity.ok(new StandardResponse<>(
                 200,

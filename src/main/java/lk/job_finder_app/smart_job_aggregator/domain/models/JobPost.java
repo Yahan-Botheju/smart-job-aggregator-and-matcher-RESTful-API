@@ -3,6 +3,10 @@ package lk.job_finder_app.smart_job_aggregator.domain.models;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.JobStatus;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Set;
+
 public class JobPost {
     private Long postId;
     private String postTitle;
@@ -57,10 +61,28 @@ public class JobPost {
         return companyId;
     }
 
-    //create default job status setup for new job post
-    public void setDefaultJobStatus(){
-        if (this.jobStatus == null){
-            this.setJobStatus(JobStatus.ACTIVE);
-        }
+
+    /* __FACTORY_METHOD__ */
+
+    public static JobPost createJobPost(
+            String postTitle,
+            String postDescription,
+            BigDecimal postSalary,
+            LocalDate createdAt,
+            JobStatus jobStatus,
+            Set<String> skillsRequired,
+            Long companyId
+    ) {
+        return new JobPost(
+                null,
+                postTitle,
+                postDescription,
+                postSalary,
+                createdAt,
+                jobStatus,
+                skillsRequired,
+                companyId
+        );
     }
+
 }
