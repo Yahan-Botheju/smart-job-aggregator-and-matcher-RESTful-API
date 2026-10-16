@@ -5,6 +5,7 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAg
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.UpdateJobPostCommand;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public interface JobPostUseCase {
     CreateJobPostResult createJobPost(CreateJobPostCommand createJobPostCommand);
 
     //update job post
-    JobPostWithCompanyAggregate updateJobPost(Long postId, JobPost jobPost);
+    JobPostWithCompanyAggregate updateJobPost(UpdateJobPostCommand updateJobPostCommand);
 
     //delete job post
     void deleteJobPost(Long postId);

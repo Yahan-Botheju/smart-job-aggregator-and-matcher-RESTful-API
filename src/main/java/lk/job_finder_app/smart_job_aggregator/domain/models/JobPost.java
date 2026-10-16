@@ -85,4 +85,22 @@ public class JobPost {
         );
     }
 
+    /* __UPDATE_JOB_POST__ */
+
+    public void updateJobPost(
+            String postTitle,
+            String postDescription,
+            BigDecimal postSalary,
+            LocalDate createdAt,
+            JobStatus jobStatus,
+            Set<String> skillsRequired
+    ){
+        this.postTitle = postTitle;
+        this.postDescription = postDescription;
+        this.postSalary = postSalary;
+        this.createdAt = createdAt;
+        this.jobStatus = jobStatus;
+        this.skillsRequired = skillsRequired;
+    }
+
 }

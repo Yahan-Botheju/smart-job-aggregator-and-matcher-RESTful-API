@@ -5,10 +5,8 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAg
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
-import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.CreateJobPostResponseDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.GetAllPostsResponseDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostRequestDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.UpdateJobPostCommand;
+import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -40,8 +38,13 @@ public interface JobPostWebMapper {
     /* __CREATE_JOB_POSTS__ */
 
     //to command
-    CreateJobPostCommand toCreateJobPostCommand(CreateJobPostCommand createJobPostCommand);
+    CreateJobPostCommand toCreateJobPostCommand(CreateJobPostRequestDTO createJobPostRequestDTO);
 
     //to response
     CreateJobPostResponseDTO toCreateJobPostResponseDTO(CreateJobPostResult  createJobPostResult);
+
+    /* __UPDATE_JOB_POST__ */
+
+    //to command
+    UpdateJobPostCommand toUpdateJobPostCommand(Long postId, UpdateJobPostRequestDTO  updateJobPostRequestDTO);
 }
