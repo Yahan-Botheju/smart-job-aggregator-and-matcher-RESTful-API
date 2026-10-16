@@ -15,6 +15,7 @@ import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllComp
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.UpdateJobPostCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -124,16 +125,26 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //update job post
     @Override
-    public JobPostWithCompanyAggregate updateJobPost(
-            Long postId,
-            JobPost jobPost
-    ){
-       jobPostRepository.getJobPostById(postId)
-               .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  postId));
+    public JobPostWithCompanyAggregate updateJobPost(UpdateJobPostCommand updateJobPostCommand){
 
-       jobPost.setDefaultJobStatus();
+        JobPost jobPost = jobPostRepository.getJobPostById(updateJobPostCommand.postId())
+               .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  updateJobPostCommand.postId()));
+
+        LocalDate updatedAt = LocalDate.now();
+
+        //update through domain model
+       jobPost.updateJobPost(
+               updateJobPostCommand.postTitle(),
+               updateJobPostCommand.postDescription(),
+               updateJobPostCommand.postSalary(),
+               updatedAt,
+               JobStatus.ACTIVE,
+               updateJobPostCommand.skillsRequired()
+       );
+
+
        //set update domain model to repo for db
-       JobPost savedJobPost = jobPostRepository.updateJobPost(postId, jobPost);
+       JobPost savedJobPost = jobPostRepository.updateJobPost(updateJobPostCommand.postId(), jobPost);
        Company company = getCompanyDetailsById(savedJobPost.getCompanyId());
 
        return new JobPostWithCompanyAggregate(savedJobPost, company);
