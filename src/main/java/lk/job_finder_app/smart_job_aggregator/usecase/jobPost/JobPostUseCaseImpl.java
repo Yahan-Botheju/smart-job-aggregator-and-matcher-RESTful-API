@@ -93,7 +93,7 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
         //check company availability using helper method
         Company company = getCompanyDetailsById(createJobPostCommand.companyId());
 
-        LocalDate createdAt = LocalDateTime.now();
+        LocalDate createdAt = LocalDate.now();
 
         JobPost newJobPost = JobPost.createJobPost(
                 createJobPostCommand.postTitle(),
