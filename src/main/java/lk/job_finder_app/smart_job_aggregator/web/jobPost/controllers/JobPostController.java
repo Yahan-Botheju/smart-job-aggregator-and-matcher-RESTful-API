@@ -6,10 +6,10 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAg
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.JobPostUseCase;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
-import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.GetAllPostsResponseDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostRequestDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.*;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers.JobPostWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
 import lombok.RequiredArgsConstructor;
@@ -49,15 +49,12 @@ public class JobPostController {
     //create new post
     @PostMapping
     @Authorize({RoleName.COMPANY_RECRUITER, RoleName.ADMIN})
-    public ResponseEntity<StandardResponse<JobPostResponseDTO>> createJobPost(
-            @Valid @RequestBody JobPostRequestDTO jobPostRequestDTO
+    public ResponseEntity<StandardResponse<CreateJobPostResponseDTO>> createJobPost(
+            @Valid @RequestBody CreateJobPostRequestDTO createJobPostRequestDTO
             ){
-        //turn requestDTO to domain model
-        JobPost toDomainModel = jobPostWebMapper.toDomainModel(jobPostRequestDTO);
-        //set values to usecase (custom job post and company method)
-        JobPostWithCompanyAggregate savedJobPost = jobPostUseCase.createJobPost(toDomainModel);
-        //get response with company name id using custom mapper
-        JobPostResponseDTO responseDTO = jobPostWebMapper.customResponseDTO(savedJobPost);
+        CreateJobPostCommand toCommand = jobPostWebMapper.toCreateJobPostCommand(createJobPostRequestDTO);
+        CreateJobPostResult toResult =  jobPostUseCase.createJobPost(toCommand);
+        CreateJobPostResponseDTO responseDTO = jobPostWebMapper.toCreateJobPostResponseDTO(toResult);
 
         return ResponseEntity.created(URI.create("/api/v1/job-posts/"))
                 .body(new StandardResponse<>(
