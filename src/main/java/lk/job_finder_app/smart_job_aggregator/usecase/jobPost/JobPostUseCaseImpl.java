@@ -12,10 +12,7 @@ import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAP
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.client.TheMuseClient;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.mappers.ExternalJobMapper;
 import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.UpdateJobPostCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -125,7 +122,7 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //update job post
     @Override
-    public JobPostWithCompanyAggregate updateJobPost(UpdateJobPostCommand updateJobPostCommand){
+    public UpdateJobPostResult updateJobPost(UpdateJobPostCommand updateJobPostCommand){
 
         JobPost jobPost = jobPostRepository.getJobPostById(updateJobPostCommand.postId())
                .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  updateJobPostCommand.postId()));
@@ -147,7 +144,19 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
        JobPost savedJobPost = jobPostRepository.updateJobPost(updateJobPostCommand.postId(), jobPost);
        Company company = getCompanyDetailsById(savedJobPost.getCompanyId());
 
-       return new JobPostWithCompanyAggregate(savedJobPost, company);
+       return new UpdateJobPostResult(
+               company.getCompanyId().toString(),
+               company.getCompanyName(),
+               company.getCompanyIndustry(),
+               company.getCompanyRating().toString(),
+               savedJobPost.getPostId().toString(),
+               savedJobPost.getPostTitle(),
+               savedJobPost.getPostDescription(),
+               savedJobPost.getPostSalary().toString(),
+               savedJobPost.getCreatedAt().toString(),
+               savedJobPost.getJobStatus().toString(),
+               savedJobPost.getSkillsRequired()
+       );
     }
 
     //delete job post
