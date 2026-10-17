@@ -17,7 +17,7 @@ public interface JobPostUseCase {
     UpdateJobPostResult updateJobPost(UpdateJobPostCommand updateJobPostCommand);
 
     //delete job post
-    void deleteJobPost(Long postId);
+    void deleteJobPost(DeleteJobPostCommand deleteJobPostCommand);
 
     //job matching
     List<JobPostWithCompanyAggregate> getRecommendedJobsForUser(Long userId);
