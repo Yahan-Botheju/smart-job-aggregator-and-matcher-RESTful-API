@@ -6,10 +6,7 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAg
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.JobPostUseCase;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.UpdateJobPostCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.*;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers.JobPostWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
@@ -70,13 +67,13 @@ public class JobPostController {
     //update job post
     @PutMapping("/{postId}")
     @Authorize({RoleName.COMPANY_RECRUITER, RoleName.ADMIN})
-    public ResponseEntity<StandardResponse<JobPostResponseDTO>> updateJobPost(
+    public ResponseEntity<StandardResponse<UpdateJobPostResponseDTO>> updateJobPost(
             @PathVariable Long postId,
             @Valid @RequestBody UpdateJobPostRequestDTO updateJobPostRequestDTO
     ){
         UpdateJobPostCommand toCommand = jobPostWebMapper.toUpdateJobPostCommand(postId,  updateJobPostRequestDTO);
-        JobPostWithCompanyAggregate toUseCase = jobPostUseCase.updateJobPost(toCommand);
-        JobPostResponseDTO responseDTO = jobPostWebMapper.customResponseDTO(toUseCase);
+        UpdateJobPostResult toUseCase = jobPostUseCase.updateJobPost(toCommand);
+        UpdateJobPostResponseDTO  responseDTO = jobPostWebMapper.toUpdateJobPostResponseDTO(toUseCase);
 
         return ResponseEntity.ok(new StandardResponse<>(
                 200,
