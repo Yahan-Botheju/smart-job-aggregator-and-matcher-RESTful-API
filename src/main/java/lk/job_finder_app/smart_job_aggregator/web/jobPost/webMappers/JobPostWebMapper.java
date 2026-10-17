@@ -2,10 +2,7 @@ package lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPost;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.UpdateJobPostCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -47,4 +44,7 @@ public interface JobPostWebMapper {
 
     //to command
     UpdateJobPostCommand toUpdateJobPostCommand(Long postId, UpdateJobPostRequestDTO  updateJobPostRequestDTO);
+
+    //to response
+    UpdateJobPostResponseDTO  toUpdateJobPostResponseDTO(UpdateJobPostResult  updateJobPostResult);
 }
