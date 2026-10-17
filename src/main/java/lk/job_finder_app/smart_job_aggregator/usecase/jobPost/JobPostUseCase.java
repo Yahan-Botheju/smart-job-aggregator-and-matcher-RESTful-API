@@ -2,10 +2,7 @@ package lk.job_finder_app.smart_job_aggregator.usecase.jobPost;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPost;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.UpdateJobPostCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 
 import java.util.List;
 
@@ -17,10 +14,10 @@ public interface JobPostUseCase {
     CreateJobPostResult createJobPost(CreateJobPostCommand createJobPostCommand);
 
     //update job post
-    JobPostWithCompanyAggregate updateJobPost(UpdateJobPostCommand updateJobPostCommand);
+    UpdateJobPostResult updateJobPost(UpdateJobPostCommand updateJobPostCommand);
 
     //delete job post
-    void deleteJobPost(Long postId);
+    void deleteJobPost(DeleteJobPostCommand deleteJobPostCommand);
 
     //job matching
     List<JobPostWithCompanyAggregate> getRecommendedJobsForUser(Long userId);

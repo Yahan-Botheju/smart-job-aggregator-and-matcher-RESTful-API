@@ -8,14 +8,12 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.enums.JobStatus;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.CompanyRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobPostRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
+import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.MethodArgumentNotValidException;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs.ExternalJobResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.client.TheMuseClient;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.mappers.ExternalJobMapper;
 import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.CreateJobPostResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.UpdateJobPostCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -125,7 +123,7 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //update job post
     @Override
-    public JobPostWithCompanyAggregate updateJobPost(UpdateJobPostCommand updateJobPostCommand){
+    public UpdateJobPostResult updateJobPost(UpdateJobPostCommand updateJobPostCommand){
 
         JobPost jobPost = jobPostRepository.getJobPostById(updateJobPostCommand.postId())
                .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  updateJobPostCommand.postId()));
@@ -147,16 +145,33 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
        JobPost savedJobPost = jobPostRepository.updateJobPost(updateJobPostCommand.postId(), jobPost);
        Company company = getCompanyDetailsById(savedJobPost.getCompanyId());
 
-       return new JobPostWithCompanyAggregate(savedJobPost, company);
+       return new UpdateJobPostResult(
+               company.getCompanyId().toString(),
+               company.getCompanyName(),
+               company.getCompanyIndustry(),
+               company.getCompanyRating().toString(),
+               savedJobPost.getPostId().toString(),
+               savedJobPost.getPostTitle(),
+               savedJobPost.getPostDescription(),
+               savedJobPost.getPostSalary().toString(),
+               savedJobPost.getCreatedAt().toString(),
+               savedJobPost.getJobStatus().toString(),
+               savedJobPost.getSkillsRequired()
+       );
     }
 
     //delete job post
     @Override
-    public void deleteJobPost(Long postId){
-        jobPostRepository.getJobPostById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  postId));
+    public void deleteJobPost(DeleteJobPostCommand deleteJobPostCommand) {
 
-        jobPostRepository.deleteJobPost(postId);
+        if(deleteJobPostCommand.postId() == null){
+            throw new MethodArgumentNotValidException("Required fields cannot be empty");
+        }
+
+        jobPostRepository.getJobPostById(deleteJobPostCommand.postId())
+                .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  deleteJobPostCommand.postId()));
+
+        jobPostRepository.deleteJobPost(deleteJobPostCommand.postId());
     }
 
     //job matching related to user
