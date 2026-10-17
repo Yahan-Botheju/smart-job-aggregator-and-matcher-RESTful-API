@@ -101,4 +101,18 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorMessage> MethodArgumentNotValidException(
+            MethodArgumentNotValidException ex,
+            WebRequest webRequest
+    ){
+        ErrorMessage errorMessage = new ErrorMessage();
+        errorMessage.setTimestamp(LocalDateTime.now());
+        errorMessage.setStatus(400);
+        errorMessage.setMessage(ex.getMessage());
+        errorMessage.setDescription(webRequest.getDescription(false));
+
+        return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
+    }
 }
