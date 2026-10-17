@@ -8,6 +8,7 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.enums.JobStatus;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.CompanyRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobPostRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
+import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.MethodArgumentNotValidException;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs.ExternalJobResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.client.TheMuseClient;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.mappers.ExternalJobMapper;
@@ -161,11 +162,16 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //delete job post
     @Override
-    public void deleteJobPost(Long postId){
-        jobPostRepository.getJobPostById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  postId));
+    public void deleteJobPost(DeleteJobPostCommand deleteJobPostCommand) {
 
-        jobPostRepository.deleteJobPost(postId);
+        if(deleteJobPostCommand.postId() == null){
+            throw new MethodArgumentNotValidException("Required fields cannot be empty");
+        }
+
+        jobPostRepository.getJobPostById(deleteJobPostCommand.postId())
+                .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  deleteJobPostCommand.postId()));
+
+        jobPostRepository.deleteJobPost(deleteJobPostCommand.postId());
     }
 
     //job matching related to user
