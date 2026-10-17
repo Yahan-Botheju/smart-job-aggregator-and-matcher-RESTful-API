@@ -89,7 +89,9 @@ public class JobPostController {
     public ResponseEntity<Void> deleteJobPost(
             @PathVariable Long postId
     ){
-        jobPostUseCase.deleteJobPost(postId);
+        DeleteJobPostCommand toCommand = jobPostWebMapper.toDeleteJobPostCommand(postId);
+        jobPostUseCase.deleteJobPost(toCommand);
+
         return ResponseEntity.noContent().build();
     }
 
