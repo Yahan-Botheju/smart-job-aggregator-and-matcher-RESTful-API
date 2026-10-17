@@ -47,4 +47,9 @@ public interface JobPostWebMapper {
 
     //to response
     UpdateJobPostResponseDTO  toUpdateJobPostResponseDTO(UpdateJobPostResult  updateJobPostResult);
+
+    /*__DELETE_JOB_POST__ */
+
+    //to command
+    DeleteJobPostCommand toDeleteJobPostCommand(Long postId);
 }
