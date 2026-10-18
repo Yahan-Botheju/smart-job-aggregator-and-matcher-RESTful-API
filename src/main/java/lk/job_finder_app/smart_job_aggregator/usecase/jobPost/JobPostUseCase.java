@@ -1,11 +1,8 @@
 package lk.job_finder_app.smart_job_aggregator.usecase.jobPost;
 
-import lk.job_finder_app.smart_job_aggregator.domain.models.JobPost;
-import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 
 import java.util.List;
-import java.util.Set;
 
 public interface JobPostUseCase {
     //get all job posts
@@ -24,5 +21,5 @@ public interface JobPostUseCase {
     List<GetUserRecommendedJobResult> getRecommendedJobsForUser(GetUserRecommendedJobCommand getUserRecommendedJobCommand);
 
     //threading method
-    List<JobPostWithCompanyAggregate> getMultiSourceRecommendations(Long userId);
+    List<MultiJobsRecommendedResult> getMultiSourceRecommendations(MultiJobsRecommendedCommand multiJobsRecommendedCommand);
 }
