@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @RequiredArgsConstructor
-public class JobPostUseCaseImpl implements JobPostUseCase{
+public class JobPostUseCaseImpl implements JobPostUseCase {
 
     //inject job post repo
     private final JobPostRepository jobPostRepository;
@@ -38,28 +38,42 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
     /* ----- HELPER METHODS ----- */
 
     //method for getting company details
-    private Company getCompanyDetailsById(Long companyId){
+    private Company getCompanyDetailsById(Long companyId) {
         return companyRepository.getCompanyById(companyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Company Not Found"));
     }
 
     //set corn job
     @Scheduled(cron = "0 * * * * *")
-    public void executeJobPostExpire(){
+    public void executeJobPostExpire() {
         LocalDate expiryLimit = LocalDate.now().minusDays(1);
         jobPostRepository.expireOldJobPosts(expiryLimit);
     }
 
 
     //get skills of applier
-    private List<JobPostWithCompanyAggregate> getJobsBySkills(Set<String> userSkills) {
+    private List<MultiJobsRecommendedResult> getJobsBySkills(Set<String> userSkills) {
         if (userSkills == null || userSkills.isEmpty()) return List.of();
         //get matching jobs via custom query
         List<JobPost> matchedJobs = jobPostRepository.findJobsByMatchingSkills(userSkills);
 
         return matchedJobs.stream().map(job -> {
-            Company company = getCompanyDetailsById(job.getCompanyId());
-            return new JobPostWithCompanyAggregate(job, company);
+            //get company
+            Company externalCompany = getCompanyDetailsById(job.getCompanyId());
+
+            return new MultiJobsRecommendedResult(
+                    matchedJobs.getPostId().toString(),
+                    matchedJobs.getPostTitle(),
+                    matchedJobs.getPostDescription(),
+                    matchedJobs.getPostSalary().toPlainString(),
+                    matchedJobs.getCreatedAt().toString(),
+                    matchedJobs.getJobStatus().name(),
+                    matchedJobs.getSkillsRequired(),
+                    null,
+                    externalCompany.getCompanyName(),
+                    externalCompany.getCompanyIndustry(),
+                    null
+            );
         }).toList();
     }
 
@@ -69,7 +83,7 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //get all job posts
     @Override
-    public List<GetAllPostsResult> getAllJobPosts(){
+    public List<GetAllPostsResult> getAllJobPosts() {
 
         List<JobPost> jobPosts = jobPostRepository.getAllJobPosts();
         return jobPosts.stream()
@@ -87,7 +101,7 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //create job post
     @Override
-    public CreateJobPostResult createJobPost(CreateJobPostCommand createJobPostCommand){
+    public CreateJobPostResult createJobPost(CreateJobPostCommand createJobPostCommand) {
         //check company availability using helper method
         Company company = getCompanyDetailsById(createJobPostCommand.companyId());
 
@@ -122,62 +136,62 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //update job post
     @Override
-    public UpdateJobPostResult updateJobPost(UpdateJobPostCommand updateJobPostCommand){
+    public UpdateJobPostResult updateJobPost(UpdateJobPostCommand updateJobPostCommand) {
 
         JobPost jobPost = jobPostRepository.getJobPostById(updateJobPostCommand.postId())
-               .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  updateJobPostCommand.postId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " + updateJobPostCommand.postId()));
 
         LocalDate updatedAt = LocalDate.now();
 
         //update through domain model
-       jobPost.updateJobPost(
-               updateJobPostCommand.postTitle(),
-               updateJobPostCommand.postDescription(),
-               updateJobPostCommand.postSalary(),
-               updatedAt,
-               JobStatus.ACTIVE,
-               updateJobPostCommand.skillsRequired()
-       );
+        jobPost.updateJobPost(
+                updateJobPostCommand.postTitle(),
+                updateJobPostCommand.postDescription(),
+                updateJobPostCommand.postSalary(),
+                updatedAt,
+                JobStatus.ACTIVE,
+                updateJobPostCommand.skillsRequired()
+        );
 
 
-       //set update domain model to repo for db
-       JobPost savedJobPost = jobPostRepository.updateJobPost(updateJobPostCommand.postId(), jobPost);
-       Company company = getCompanyDetailsById(savedJobPost.getCompanyId());
+        //set update domain model to repo for db
+        JobPost savedJobPost = jobPostRepository.updateJobPost(updateJobPostCommand.postId(), jobPost);
+        Company company = getCompanyDetailsById(savedJobPost.getCompanyId());
 
-       return new UpdateJobPostResult(
-               company.getCompanyId().toString(),
-               company.getCompanyName(),
-               company.getCompanyIndustry(),
-               company.getCompanyRating().toString(),
-               savedJobPost.getPostId().toString(),
-               savedJobPost.getPostTitle(),
-               savedJobPost.getPostDescription(),
-               savedJobPost.getPostSalary().toString(),
-               savedJobPost.getCreatedAt().toString(),
-               savedJobPost.getJobStatus().toString(),
-               savedJobPost.getSkillsRequired()
-       );
+        return new UpdateJobPostResult(
+                company.getCompanyId().toString(),
+                company.getCompanyName(),
+                company.getCompanyIndustry(),
+                company.getCompanyRating().toString(),
+                savedJobPost.getPostId().toString(),
+                savedJobPost.getPostTitle(),
+                savedJobPost.getPostDescription(),
+                savedJobPost.getPostSalary().toString(),
+                savedJobPost.getCreatedAt().toString(),
+                savedJobPost.getJobStatus().toString(),
+                savedJobPost.getSkillsRequired()
+        );
     }
 
     //delete job post
     @Override
     public void deleteJobPost(DeleteJobPostCommand deleteJobPostCommand) {
 
-        if(deleteJobPostCommand.postId() == null){
+        if (deleteJobPostCommand.postId() == null) {
             throw new MethodArgumentNotValidException("Required fields cannot be empty");
         }
 
         jobPostRepository.getJobPostById(deleteJobPostCommand.postId())
-                .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " +  deleteJobPostCommand.postId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Job Post Not Found" + ", " + deleteJobPostCommand.postId()));
 
         jobPostRepository.deleteJobPost(deleteJobPostCommand.postId());
     }
 
     //job matching related to user
     @Override
-    public List<GetUserRecommendedJobResult> getRecommendedJobsForUser(GetUserRecommendedJobCommand  getUserRecommendedJobCommand) {
+    public List<GetUserRecommendedJobResult> getRecommendedJobsForUser(GetUserRecommendedJobCommand getUserRecommendedJobCommand) {
 
-        if(getUserRecommendedJobCommand.userId() == null){
+        if (getUserRecommendedJobCommand.userId() == null) {
             throw new MethodArgumentNotValidException("Required fields cannot be empty");
         }
 
@@ -193,11 +207,15 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
     }
 
     //get db and API data related to user skills
-    public List<JobPostWithCompanyAggregate> getMultiSourceRecommendations(
-            Long userId
-    ){
+    @Override
+    public List<MultiJobsRecommendedResult> getMultiSourceRecommendations(MultiJobsRecommendedCommand multiJobsRecommendedCommand) {
+
+        if (multiJobsRecommendedCommand == null || multiJobsRecommendedCommand.userId() == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+
         //check user availability
-        User user = userRepository.userFindById(userId)
+        User user = userRepository.userFindById(multiJobsRecommendedCommand.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
 
         //get user skills via custom query
@@ -205,30 +223,45 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
 
         //allocate the data that taken from local db
-        CompletableFuture<List<JobPostWithCompanyAggregate>>
+        CompletableFuture<List<MultiJobsRecommendedResult>>
                 localJobsFuture = CompletableFuture.supplyAsync(() -> getJobsBySkills(userSkills));
 
+
         //external API jobs
-        CompletableFuture<List<JobPostWithCompanyAggregate>>
-                externalJobsFuture = CompletableFuture.supplyAsync(() -> {
-            List<ExternalJobResponseDTO.TheMuseJob> museJobs = theMuseClient.fetchExternalJobs();
+        CompletableFuture<List<MultiJobsRecommendedResult>> externalJobsFuture =
+                CompletableFuture.supplyAsync(() -> {
+                    List<ExternalJobResponseDTO.TheMuseJob> museJobs = theMuseClient.fetchExternalJobs();
 
-            return museJobs.stream().map( theMuseJob -> {
-                JobPost posts = externalJobMapper.toDomain(theMuseJob);
+                    return museJobs.stream().map(theMuseJob -> {
 
-                Company externalCompany = new Company();
-                externalCompany.setCompanyName(theMuseJob.company().name());
+                        JobPost posts = externalJobMapper.toDomain(theMuseJob);
 
-                return new JobPostWithCompanyAggregate(posts, externalCompany);
-            }).toList();
-        });
+                        // theMuseJob.name() වෙනුවට theMuseJob.company().name() විය යුතුය
+                        Company externalCompany = Company.createCompany(theMuseJob.company().name(), null, null);
+
+
+                        return new MultiJobsRecommendedResult(
+                                posts.getPostId().toString(),
+                                posts.getPostTitle(),
+                                posts.getPostDescription(),
+                                posts.getPostSalary().toPlainString(),
+                                posts.getCreatedAt().toString(),
+                                posts.getJobStatus().name(),
+                                posts.getSkillsRequired(),
+                                null,
+                                externalCompany.getCompanyName(),
+                                externalCompany.getCompanyIndustry(),
+                                null
+                        );
+                    }).toList();
+                });
 
         return localJobsFuture.thenCombine(externalJobsFuture,
                 (local, external) -> {
-            List<JobPostWithCompanyAggregate> all = new ArrayList<>(local);
-            all.addAll(external);
-            return all;
-        }).join();
+                    List<MultiJobsRecommendedResult> all = new ArrayList<>(local);
+                    all.addAll(external);
+                    return all;
+                }).join();
     }
 
 
