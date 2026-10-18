@@ -5,6 +5,7 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAg
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 
 import java.util.List;
+import java.util.Set;
 
 public interface JobPostUseCase {
     //get all job posts
@@ -20,8 +21,8 @@ public interface JobPostUseCase {
     void deleteJobPost(DeleteJobPostCommand deleteJobPostCommand);
 
     //job matching
-    List<JobPostWithCompanyAggregate> getRecommendedJobsForUser(Long userId);
+    List<GetUserRecommendedJobResult> getRecommendedJobsForUser(GetUserRecommendedJobCommand getUserRecommendedJobCommand);
 
     //threading method
-    public List<JobPostWithCompanyAggregate> getMultiSourceRecommendations(Long userId);
+    List<JobPostWithCompanyAggregate> getMultiSourceRecommendations(Long userId);
 }
