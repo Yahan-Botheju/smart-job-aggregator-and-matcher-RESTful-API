@@ -1,6 +1,8 @@
 package lk.job_finder_app.smart_job_aggregator.domain.models;
 
 
+import java.util.Set;
+
 public class User {
     private Long userId;
     private String userName;

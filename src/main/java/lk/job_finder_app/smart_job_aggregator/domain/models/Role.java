@@ -1,5 +1,7 @@
 package lk.job_finder_app.smart_job_aggregator.domain.models;
 
+import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
+
 public class Role {
     private Long roleId;
     private RoleName roleName;
