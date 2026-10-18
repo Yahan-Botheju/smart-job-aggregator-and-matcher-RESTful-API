@@ -12,15 +12,14 @@ import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasse
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs.ExternalJobResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.client.TheMuseClient;
 import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.mappers.ExternalJobMapper;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -176,11 +175,21 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
     //job matching related to user
     @Override
-    public List<JobPostWithCompanyAggregate> getRecommendedJobsForUser(Long userId){
-        User user = userRepository.userFindById(userId)
+    public List<GetUserRecommendedJobResult> getRecommendedJobsForUser(GetUserRecommendedJobCommand  getUserRecommendedJobCommand) {
+
+        if(getUserRecommendedJobCommand.userId() == null){
+            throw new MethodArgumentNotValidException("Required fields cannot be empty");
+        }
+
+        User user = userRepository.userFindById(getUserRecommendedJobCommand.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
 
-        return getJobsBySkills(user.getSkillsRequired());
+        Set<String> recommendedJobs = user.getSkillsRequired();
+
+        return List.of(new GetUserRecommendedJobResult(
+                user.getUserId().toString(),
+                recommendedJobs
+        ));
     }
 
     //get db and API data related to user skills
@@ -197,9 +206,7 @@ public class JobPostUseCaseImpl implements JobPostUseCase{
 
         //allocate the data that taken from local db
         CompletableFuture<List<JobPostWithCompanyAggregate>>
-                localJobsFuture = CompletableFuture.supplyAsync(() -> {
-                    return getJobsBySkills(userSkills);
-        });
+                localJobsFuture = CompletableFuture.supplyAsync(() -> getJobsBySkills(userSkills));
 
         //external API jobs
         CompletableFuture<List<JobPostWithCompanyAggregate>>
