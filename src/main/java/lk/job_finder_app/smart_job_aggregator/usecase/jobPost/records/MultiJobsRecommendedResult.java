@@ -1,4 +1,19 @@
 package lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records;
 
-public record MultiJobsRecommendedResult() {
+import java.util.Set;
+
+public record MultiJobsRecommendedResult(
+        String postId,
+        String postTitle,
+        String postDescription,
+        String postSalary,
+        String createdAt,
+        String jobStatus,
+        Set<String> skillsRequired,
+
+        String companyId,
+        String companyName,
+        String companyIndustry,
+        String companyRating
+) {
 }
