@@ -12,6 +12,9 @@ public interface JobPostRepository {
     //job post find by id (CUSTOM METHOD)
     Optional<JobPost> getJobPostById(Long id);
 
+    //find post by skill
+    Optional<List<JobPost>> getJobPostsBySkills(Set<String> skills);
+
     //get all posts
     List<JobPost> getAllJobPosts();
 

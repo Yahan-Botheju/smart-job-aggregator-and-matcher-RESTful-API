@@ -98,11 +98,15 @@ public class JobPostController {
     //job post matching
     @GetMapping("/{userId}/recommendations")
     @Authorize({RoleName.COMPANY_RECRUITER, RoleName.ADMIN})
-    public ResponseEntity<StandardResponse<List<JobPostResponseDTO>>> getRecommendedJobPostsForUser(
+    public ResponseEntity<StandardResponse<List<GetUserRecommendedJobsResponseDTO>>> getRecommendedJobPostsForUser(
             @PathVariable Long userId
     ){
-        List<JobPostWithCompanyAggregate> jobPosts = jobPostUseCase.getRecommendedJobsForUser(userId);
-        List<JobPostResponseDTO> responseDTO = jobPosts.stream().map(jobPostWebMapper::customResponseDTO).toList();
+        GetUserRecommendedJobCommand toCommand = jobPostWebMapper.toGetUserRecommendedJobCommand(userId);
+
+        List<GetUserRecommendedJobResult> toPostResults = jobPostUseCase.getRecommendedJobsForUser(toCommand);
+        List<GetUserRecommendedJobsResponseDTO> responseDTO = toPostResults.stream()
+                .map(jobPostWebMapper::toGetUserRecommendedJobsResponseDTO)
+                .toList();
 
         return ResponseEntity.ok(new StandardResponse<>(
                 200,
