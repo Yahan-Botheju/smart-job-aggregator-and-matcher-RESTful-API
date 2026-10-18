@@ -52,4 +52,12 @@ public interface JobPostWebMapper {
 
     //to command
     DeleteJobPostCommand toDeleteJobPostCommand(Long postId);
+
+    /* __GET_RECOMMENDED_JOBS__ */
+
+    //to command
+    GetUserRecommendedJobCommand toGetUserRecommendedJobCommand(Long userId);
+
+    //to response
+    GetUserRecommendedJobsResponseDTO toGetUserRecommendedJobsResponseDTO(GetUserRecommendedJobResult  getUserRecommendedJobResult);
 }
