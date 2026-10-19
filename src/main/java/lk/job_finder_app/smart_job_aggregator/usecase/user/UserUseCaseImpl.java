@@ -3,6 +3,7 @@ package lk.job_finder_app.smart_job_aggregator.usecase.user;
 import lk.job_finder_app.smart_job_aggregator.domain.models.User;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
 import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.ResourceNotFoundException;
+import lk.job_finder_app.smart_job_aggregator.usecase.user.records.GetAllUsersResults;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -15,8 +16,15 @@ public class UserUseCaseImpl implements UserUseCase{
 
     //get all users
     @Override
-    public List<User> getAllUsers(){
-        return userRepository.getAllUsers();
+    public List<GetAllUsersResults> getAllUsers(){
+        return userRepository.getAllUsers().stream()
+                .map(user -> new GetAllUsersResults(
+                        user.getUserId().toString(),
+                        user.getUserName(),
+                        user.getUserEmail(),
+                        user.getRole().toString(),
+                        user.getSkillsRequired()
+                )).toList();
     }
 
     //create user
