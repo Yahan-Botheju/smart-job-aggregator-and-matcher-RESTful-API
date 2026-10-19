@@ -10,6 +10,9 @@ public interface UserRepository {
     //get user by ID
     Optional<User> userFindById(Long userId);
 
+    //find user by email
+    Optional<User> userFindByEmail(String email);
+
     //CUSTOM METHOD FOR RATE LIMIT
     Optional<User> findByIdWithSkills(Long userId);
 
