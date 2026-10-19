@@ -7,11 +7,13 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.JobPostUseCase;
 import lk.job_finder_app.smart_job_aggregator.usecase.user.UserUseCase;
+import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.user.records.GetAllUsersResults;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers.JobPostWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
-import lk.job_finder_app.smart_job_aggregator.web.user.DTOs.UserRequestDTO;
-import lk.job_finder_app.smart_job_aggregator.web.user.DTOs.UserResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.web.user.DTOs.*;
 import lk.job_finder_app.smart_job_aggregator.web.user.webMappers.UserWebMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,25 +28,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    //inject user usecase
+    //inject required dependencies
     private final UserUseCase userUseCase;
-
-    //inject user web mapper
-    private final UserWebMapper userWebMapper;
-
-    //inject job-post usecase
     private final JobPostUseCase jobPostUseCase;
-
-    //inject job-post web mapper
+    private final UserWebMapper userWebMapper;
     private final JobPostWebMapper jobPostWebMapper;
 
     //get all users
     @GetMapping
     @Authorize(RoleName.ADMIN)
-    public ResponseEntity<StandardResponse<List<UserResponseDTO>>> getAllUsers(){
-        List<User> usersDomainModel = userUseCase.getAllUsers();
+    public ResponseEntity<StandardResponse<List<GetAllUsersResponseDTO>>> getAllUsers(){
 
-        List<UserResponseDTO> toResponseDTO = usersDomainModel.stream().map(userWebMapper::toResponseDTO).toList();
+        List<GetAllUsersResults> usersDomainModel = userUseCase.getAllUsers();
+        List<GetAllUsersResponseDTO> toResponseDTO = usersDomainModel.stream()
+                .map(userWebMapper::getAllUsers).toList();
 
         return ResponseEntity.ok(
                 new StandardResponse<>(
@@ -59,17 +56,13 @@ public class UserController {
     //create user
     @PostMapping
     @Authorize({RoleName.USER,  RoleName.ADMIN})
-    public ResponseEntity<StandardResponse<UserResponseDTO>> createUser(
-            @Valid @RequestBody UserRequestDTO userRequestDTO
+    public ResponseEntity<StandardResponse<CreateUserResponseDTO>> createUser(
+            @Valid @RequestBody CreateUserRequestDTO createUserRequestDTO
     ){
-        //turn to domain model
-        User toDomainModel = userWebMapper.toDomainModel(userRequestDTO);
 
-        //set to usecase and get response
-        User responseModel = userUseCase.createUser(toDomainModel);
-
-        //turn to response
-        UserResponseDTO toResponseDTO = userWebMapper.toResponseDTO(responseModel);
+        CreateUserCommand toCommand = userWebMapper.toCreateUserCommand(createUserRequestDTO);
+        CreateUserResult toResult = userUseCase.createUser(toCommand);
+        CreateUserResponseDTO toResponseDTO = userWebMapper.toCreateUserResponseDTO(toResult);
 
         return  ResponseEntity.created(URI.create("/api/v1/users/" + "," + toResponseDTO.getUserId())).body(
                 new StandardResponse<>(
