@@ -7,9 +7,11 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.JobPostUseCase;
 import lk.job_finder_app.smart_job_aggregator.usecase.user.UserUseCase;
+import lk.job_finder_app.smart_job_aggregator.usecase.user.records.GetAllUsersResults;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers.JobPostWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
+import lk.job_finder_app.smart_job_aggregator.web.user.DTOs.GetAllUsersResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.user.DTOs.UserRequestDTO;
 import lk.job_finder_app.smart_job_aggregator.web.user.DTOs.UserResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.user.webMappers.UserWebMapper;
@@ -26,25 +28,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    //inject user usecase
+    //inject required dependencies
     private final UserUseCase userUseCase;
-
-    //inject user web mapper
-    private final UserWebMapper userWebMapper;
-
-    //inject job-post usecase
     private final JobPostUseCase jobPostUseCase;
-
-    //inject job-post web mapper
+    private final UserWebMapper userWebMapper;
     private final JobPostWebMapper jobPostWebMapper;
 
     //get all users
     @GetMapping
     @Authorize(RoleName.ADMIN)
-    public ResponseEntity<StandardResponse<List<UserResponseDTO>>> getAllUsers(){
-        List<User> usersDomainModel = userUseCase.getAllUsers();
+    public ResponseEntity<StandardResponse<List<GetAllUsersResponseDTO>>> getAllUsers(){
 
-        List<UserResponseDTO> toResponseDTO = usersDomainModel.stream().map(userWebMapper::toResponseDTO).toList();
+        List<GetAllUsersResults> usersDomainModel = userUseCase.getAllUsers();
+        List<GetAllUsersResponseDTO> toResponseDTO = usersDomainModel.stream()
+                .map(userWebMapper::getAllUsers).toList();
 
         return ResponseEntity.ok(
                 new StandardResponse<>(
