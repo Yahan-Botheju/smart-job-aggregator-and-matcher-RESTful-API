@@ -35,6 +35,11 @@ public class UserRepositoryImpl implements UserRepository {
         return jpaUserRepository.findById(userId).map(userPersistenceMapper::toDomainModel);
     }
 
+    @Override
+    public Optional<User> userFindByEmail(String email) {
+        return jpaUserRepository.findByEmail(email).map(userPersistenceMapper::toDomainModel);
+    }
+
     //create custom method for rate limit to prevent lazy loading
     @Override
     public Optional<User> findByIdWithSkills(Long userId){
