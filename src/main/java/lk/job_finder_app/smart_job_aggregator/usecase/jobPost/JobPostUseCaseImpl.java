@@ -62,13 +62,13 @@ public class JobPostUseCaseImpl implements JobPostUseCase {
             Company externalCompany = getCompanyDetailsById(job.getCompanyId());
 
             return new MultiJobsRecommendedResult(
-                    matchedJobs.getPostId().toString(),
-                    matchedJobs.getPostTitle(),
-                    matchedJobs.getPostDescription(),
-                    matchedJobs.getPostSalary().toPlainString(),
-                    matchedJobs.getCreatedAt().toString(),
-                    matchedJobs.getJobStatus().name(),
-                    matchedJobs.getSkillsRequired(),
+                    job.getPostId().toString(),
+                    job.getPostTitle(),
+                    job.getPostDescription(),
+                    job.getPostSalary().toPlainString(),
+                    job.getCreatedAt().toString(),
+                    job.getJobStatus().name(),
+                    job.getSkillsRequired(),
                     null,
                     externalCompany.getCompanyName(),
                     externalCompany.getCompanyIndustry(),
@@ -236,7 +236,7 @@ public class JobPostUseCaseImpl implements JobPostUseCase {
 
                         JobPost posts = externalJobMapper.toDomain(theMuseJob);
 
-                        // theMuseJob.name() වෙනුවට theMuseJob.company().name() විය යුතුය
+
                         Company externalCompany = Company.createCompany(theMuseJob.company().name(), null, null);
 
 
