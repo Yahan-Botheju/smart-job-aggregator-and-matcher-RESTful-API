@@ -12,4 +12,7 @@ public interface JpaUserRepository extends JpaRepository<UserEntity, Long> {
     //create custom query for keep lazy loading
     @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.skillsRequired WHERE u.userId = :id")
     Optional<UserEntity> findByIdWithSkills(@Param("id") Long id);
+
+    //user find by email
+    Optional<UserEntity> findByEmail(String email);
 }
