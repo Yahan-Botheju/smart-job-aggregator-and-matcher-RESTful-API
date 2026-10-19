@@ -30,6 +30,11 @@ public class JobPostRepositoryImpl implements JobPostRepository {
         return jpaJobPostRepository.findById(postId).map(jobPostPersistenceMapper::toDomainModel);
     }
 
+    @Override
+    public Optional<List<JobPost>> getJobPostsBySkills(Set<String> skills) {
+        return Optional.empty();
+    }
+
     //save job post status expired in db
     @Override
     public void expireOldJobPosts(LocalDate expiryLimit) {
@@ -60,9 +65,6 @@ public class JobPostRepositoryImpl implements JobPostRepository {
     //create job post
     @Override
     public JobPost createJobPost(JobPost jobPost){
-        //call default value set method in domain model
-        jobPost.setDefaultJobStatus();
-
         //set to entity
         JobPostEntity jobPostEntity = jobPostPersistenceMapper.toEntity(jobPost);
         
