@@ -6,9 +6,7 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
 import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.IllegalStateException;
 import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.ResourceNotFoundException;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.GetAllUsersResults;
+import lk.job_finder_app.smart_job_aggregator.usecase.user.records.*;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -61,14 +59,28 @@ public class UserUseCaseImpl implements UserUseCase{
 
     //update user
     @Override
-    public User updateUser(
-            Long userId,
-            User user){
+    public UpdateUserResult updateUser(UpdateUserCommand updateUserCommand) {
         //check user availability
-        userRepository.userFindById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found" + " , " +  userId));
+        User user = userRepository.userFindById(updateUserCommand.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found" + " , " +  updateUserCommand.userId()));
 
-        return userRepository.updateUser(userId, user);
+        //update user through domain model
+        user.updateUser(
+                updateUserCommand.userName(),
+                updateUserCommand.userEmail(),
+                user.getRole(),
+                updateUserCommand.skillsRequired()
+        );
+
+        User savedUser = userRepository.updateUser(user);
+
+        return new  UpdateUserResult(
+                savedUser.getUserId().toString(),
+                savedUser.getUserName(),
+                savedUser.getUserEmail(),
+                savedUser.getRole().toString(),
+                savedUser.getSkillsRequired()
+        );
     }
 
     //delete user
