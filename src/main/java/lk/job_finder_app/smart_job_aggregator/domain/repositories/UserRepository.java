@@ -23,7 +23,7 @@ public interface UserRepository {
     User createUser(User user);
 
     //update user
-    User updateUser(Long userId, User user);
+    User updateUser(User user);
 
     //delete user
     void deleteUser(Long userId);
