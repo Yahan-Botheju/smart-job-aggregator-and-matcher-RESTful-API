@@ -1,9 +1,7 @@
 package lk.job_finder_app.smart_job_aggregator.usecase.user;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.User;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.GetAllUsersResults;
+import lk.job_finder_app.smart_job_aggregator.usecase.user.records.*;
 
 import java.util.List;
 
@@ -16,8 +14,8 @@ public interface UserUseCase {
     CreateUserResult createUser(CreateUserCommand createUserCommand);
 
     //update user
-    User updateUser(Long userId, User user);
+    UpdateUserResult updateUser(UpdateUserCommand updateUserCommand);
 
     //delete user
-    void deleteUser(Long userId);
+    void deleteUser(DeleteUserCommand deleteUserCommand);
 }

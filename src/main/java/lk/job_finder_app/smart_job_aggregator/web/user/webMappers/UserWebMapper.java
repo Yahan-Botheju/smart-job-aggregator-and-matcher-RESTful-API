@@ -1,9 +1,7 @@
 package lk.job_finder_app.smart_job_aggregator.web.user.webMappers;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.User;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.GetAllUsersResults;
+import lk.job_finder_app.smart_job_aggregator.usecase.user.records.*;
 import lk.job_finder_app.smart_job_aggregator.web.user.DTOs.*;
 import org.h2.command.ddl.CreateUser;
 import org.mapstruct.Mapper;
@@ -28,4 +26,17 @@ public interface UserWebMapper {
 
     //to response
     CreateUserResponseDTO toCreateUserResponseDTO(CreateUserResult createUserResult);
+
+    /* __UPDATE_USER__ */
+
+    //to command
+    UpdateUserCommand toUpdateUserCommand(Long userId, UpdateUserRequestDTO updateUserRequestDTO);
+
+    //to response
+    UpdateUserResponseDTO toUpdateUserResponseDTO(UpdateUserResult updateUserResult);
+
+    /* __DELETE_USER__ */
+
+    //to command
+    DeleteUserCommand toDeleteUserCommand(Long userId);
 }
