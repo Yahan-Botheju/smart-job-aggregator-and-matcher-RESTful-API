@@ -51,6 +51,7 @@ public class UserController {
         );
 
     }
+
     //create user
     @PostMapping
     @Authorize({RoleName.USER,  RoleName.ADMIN})
@@ -72,6 +73,7 @@ public class UserController {
         );
 
     }
+
     //update user
     @PutMapping("/{userId}")
     @Authorize({RoleName.USER, RoleName.ADMIN})
@@ -93,13 +95,15 @@ public class UserController {
         );
 
     }
+
     //delete user
     @DeleteMapping("/{userId}")
     @Authorize(RoleName.ADMIN)
     public ResponseEntity<Void> deleteUser(
             @PathVariable Long userId
     ){
-        userUseCase.deleteUser(userId);
+        DeleteUserCommand toCommand = userWebMapper.toDeleteUserCommand(userId);
+        userUseCase.deleteUser(toCommand);
         return ResponseEntity.noContent().build();
     }
 
