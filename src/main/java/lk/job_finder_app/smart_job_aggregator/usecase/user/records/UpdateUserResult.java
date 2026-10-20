@@ -1,4 +1,12 @@
 package lk.job_finder_app.smart_job_aggregator.usecase.user.records;
 
-public record UpdateUserResult() {
+import java.util.Set;
+
+public record UpdateUserResult(
+        String userId,
+        String userName,
+        String userEmail,
+        String role,
+        Set<String> skillsRequired
+) {
 }
