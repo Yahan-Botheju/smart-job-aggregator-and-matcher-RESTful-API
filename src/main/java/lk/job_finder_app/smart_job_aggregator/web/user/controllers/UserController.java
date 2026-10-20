@@ -7,9 +7,7 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.JobPostUseCase;
 import lk.job_finder_app.smart_job_aggregator.usecase.user.UserUseCase;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.CreateUserResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.user.records.GetAllUsersResults;
+import lk.job_finder_app.smart_job_aggregator.usecase.user.records.*;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers.JobPostWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
@@ -77,13 +75,13 @@ public class UserController {
     //update user
     @PutMapping("/{userId}")
     @Authorize({RoleName.USER, RoleName.ADMIN})
-    public ResponseEntity<StandardResponse<UserResponseDTO>> updateUser(
+    public ResponseEntity<StandardResponse<UpdateUserResponseDTO>> updateUser(
             @PathVariable Long userId,
-            @Valid @RequestBody UserRequestDTO userRequestDTO
+            @Valid @RequestBody UpdateUserRequestDTO updateUserRequestDTO
     ){
-        User toDomainModel = userWebMapper.toDomainModel(userRequestDTO);
-        User responseModel = userUseCase.updateUser(userId, toDomainModel);
-        UserResponseDTO toResponseDTO = userWebMapper.toResponseDTO(responseModel);
+        UpdateUserCommand toCommand = userWebMapper.toUpdateUserCommand(userId, updateUserRequestDTO);
+        UpdateUserResult toResult = userUseCase.updateUser(toCommand);
+        UpdateUserResponseDTO toResponseDTO = userWebMapper.toUpdateUserResponseDTO(toResult);
 
         return  ResponseEntity.ok(
                 new StandardResponse<>(
