@@ -34,4 +34,9 @@ public interface UserWebMapper {
 
     //to response
     UpdateUserResponseDTO toUpdateUserResponseDTO(UpdateUserResult updateUserResult);
+
+    /* __DELETE_USER__ */
+
+    //to command
+    DeleteUserCommand toDeleteUserCommand(Long userId);
 }
