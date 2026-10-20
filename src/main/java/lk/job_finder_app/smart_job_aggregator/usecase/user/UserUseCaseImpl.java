@@ -1,6 +1,5 @@
 package lk.job_finder_app.smart_job_aggregator.usecase.user;
 
-import lk.job_finder_app.smart_job_aggregator.domain.models.Role;
 import lk.job_finder_app.smart_job_aggregator.domain.models.User;
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
@@ -85,10 +84,10 @@ public class UserUseCaseImpl implements UserUseCase{
 
     //delete user
     @Override
-    public void deleteUser(Long userId){
-        userRepository.userFindById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found" + " , " +  userId));
+    public void deleteUser(DeleteUserCommand deleteUserCommand) {
+        userRepository.userFindById(deleteUserCommand.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found" + " , " + deleteUserCommand.userId()));
 
-        userRepository.deleteUser(userId);
+        userRepository.deleteUser(deleteUserCommand.userId());
     }
 }
