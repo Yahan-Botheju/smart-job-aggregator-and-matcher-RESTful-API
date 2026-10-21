@@ -2,6 +2,8 @@ package lk.job_finder_app.smart_job_aggregator.web.jobApplication.webMappers;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobApplication;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobApplicationAggregate;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.GetAllJobApplicationsResults;
+import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.GetAllJobApplicationsResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationRequestDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationResponseDTO;
 import org.mapstruct.Mapper;
@@ -30,4 +32,9 @@ public interface JobApplicationWebMapper {
 
         return responseDTO;
     }
+
+    /* __GET_ALL_JOB_APPLICATIONS__ */
+
+    //to response
+    GetAllJobApplicationsResponseDTO toGetAllJobApplicationsResponseDTO(GetAllJobApplicationsResults getAllJobApplicationsResults);
 }
