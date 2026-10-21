@@ -6,6 +6,7 @@ import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobApplication
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobPostRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
 import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.ResourceNotFoundException;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.GetAllJobApplicationsResults;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -45,14 +46,39 @@ public class JobApplicationUseCaseImpl implements JobApplicationUseCase {
 
     //get all job applications
     @Override
-    public List<JobApplicationAggregate> getAllJobApplications(){
+    public List<GetAllJobApplicationsResults> getAllJobApplications(){
         return jobApplicationRepository.getAllJobApplications().stream()
                 .map(jobApplication -> {
                     Company company = getCompanyDetailsById(jobApplication.getCompanyId());
                     JobPost jobPost = getJobPostDetailsById(jobApplication.getJobPostId());
                     User user = getUserDetailsById(jobApplication.getUserId());
 
-                    return new JobApplicationAggregate(company,jobApplication, jobPost, user);
+                    return new GetAllJobApplicationsResults(
+                            company.getCompanyId().toString(),
+                            company.getCompanyName(),
+                            company.getCompanyIndustry(),
+                            company.getCompanyRating().toString(),
+
+                            jobApplication.getJobApplicationId().toString(),
+                            jobApplication.getResumeUrl(),
+                            jobApplication.getMatchScore(),
+                            jobApplication.getApplicationStatus().toString(),
+                            jobApplication.getAppliedAt().toString(),
+
+                            jobPost.getPostId().toString(),
+                            jobPost.getPostTitle(),
+                            jobPost.getPostDescription(),
+                            jobPost.getPostSalary().toString(),
+                            jobPost.getCreatedAt().toString(),
+                            jobPost.getJobStatus().toString(),
+                            jobPost.getSkillsRequired(),
+
+                            user.getUserId().toString(),
+                            user.getUserName(),
+                            user.getUserEmail(),
+                            user.getRole().toString()
+
+                    );
                 }).toList();
     }
 
