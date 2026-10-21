@@ -6,8 +6,10 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.JobApplicationAggreg
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.JobApplicationUseCase;
-import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationRequestDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.GetAllJobApplicationsResults;
+import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.*;
 import lk.job_finder_app.smart_job_aggregator.web.jobApplication.webMappers.JobApplicationWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
 import lombok.RequiredArgsConstructor;
@@ -23,21 +25,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JobApplicationController {
 
-    //inject web mapper
+    //inject required dependencies
     private final JobApplicationWebMapper  jobApplicationWebMapper;
-
-    //inject use case
     private final JobApplicationUseCase jobApplicationUseCase;
 
 
     //get all job applications
     @GetMapping
     @Authorize(RoleName.ADMIN)
-    public ResponseEntity<StandardResponse<List<JobApplicationResponseDTO>>> getAllJobApplications(){
-        List<JobApplicationAggregate> jobApplications = jobApplicationUseCase.getAllJobApplications();
+    public ResponseEntity<StandardResponse<List<GetAllJobApplicationsResponseDTO>>> getAllJobApplications(){
 
-        List<JobApplicationResponseDTO> responseDTOS = jobApplications.stream()
-                .map(jobApplicationWebMapper::aggregatorResponseDTO).toList();
+        List<GetAllJobApplicationsResults> jobApplications = jobApplicationUseCase.getAllJobApplications();
+        List<GetAllJobApplicationsResponseDTO> responseDTOS = jobApplications.stream()
+                .map(jobApplicationWebMapper::toGetAllJobApplicationsResponseDTO).toList();
 
         return ResponseEntity.ok(new StandardResponse<>(
                 200,
@@ -50,12 +50,12 @@ public class JobApplicationController {
     //create job application
     @PostMapping("/apply")
     @Authorize({RoleName.ADMIN, RoleName.USER})
-    public ResponseEntity<StandardResponse<JobApplicationResponseDTO>> applyForJob(
-            @Valid  @RequestBody JobApplicationRequestDTO jobApplicationRequestDTO
+    public ResponseEntity<StandardResponse<ApplyJobResponseDTO>> applyForJob(
+            @Valid  @RequestBody ApplyJobRequestDTO applyJobRequestDTO
     ){
-        JobApplication toDomainModel = jobApplicationWebMapper.toDomainModel(jobApplicationRequestDTO);
-        JobApplicationAggregate jobApplicationAggregate = jobApplicationUseCase.applyForJob(toDomainModel);
-        JobApplicationResponseDTO responseDTO = jobApplicationWebMapper.aggregatorResponseDTO(jobApplicationAggregate);
+        ApplyJobCommand toCommand = jobApplicationWebMapper.toApplyJobCommand(applyJobRequestDTO);
+        ApplyJobResult toResult = jobApplicationUseCase.applyForJob(toCommand);
+        ApplyJobResponseDTO responseDTO = jobApplicationWebMapper.toApplyJobResponseDTO(toResult);
 
         return ResponseEntity.created(URI.create("/api/v1/job-applications/" + responseDTO.getJobApplicationId()))
                 .body(new StandardResponse<>(

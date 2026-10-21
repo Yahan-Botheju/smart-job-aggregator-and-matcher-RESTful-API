@@ -1,7 +1,9 @@
 package lk.job_finder_app.smart_job_aggregator.domain.models;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.ApplicationStatus;
+import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.MethodArgumentNotValidException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -59,23 +61,44 @@ public class JobApplication {
         return companyId;
     }
 
-    //job application default status
-    public void jobApplicationDefaultStatus() {
-        if (this.applicationStatus == null) {
-            this.applicationStatus = ApplicationStatus.PENDING;
-        }
+    /* __FACTORY_METHOD__ */
+
+    public static JobApplication createNewJobApplication(
+            String resumeUrl,
+            double matchScore,
+            ApplicationStatus applicationStatus,
+            LocalDateTime appliedAt,
+            Long userId,
+            Long jobPostId,
+            Long companyId
+    ) {
+        return new JobApplication(
+               null,
+                resumeUrl,
+                matchScore,
+                applicationStatus,
+                appliedAt,
+                userId,
+                jobPostId,
+                companyId
+        );
     }
+
+
+
+    /* __DOMAIN_LOGICS__ */
+
 
     //create method for calculate matching score
     public void calculateMatchScore(
             Set<String> userSkills,
             Set<String> requiredJobSkills
     ) {
-        if(userSkills == null || userSkills.isEmpty() ||requiredJobSkills == null || requiredJobSkills.isEmpty()) {
+        if (userSkills == null || userSkills.isEmpty() || requiredJobSkills == null || requiredJobSkills.isEmpty()) {
             this.matchScore = 0.0;
             return;
         }
         long matchCount = userSkills.stream().filter(requiredJobSkills::contains).count();
-        this.matchScore = (((double)  matchCount) /  requiredJobSkills.size()) * 100;
+        this.matchScore = (((double) matchCount) / requiredJobSkills.size()) * 100;
     }
 }

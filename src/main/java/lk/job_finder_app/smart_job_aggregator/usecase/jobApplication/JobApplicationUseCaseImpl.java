@@ -1,11 +1,15 @@
 package lk.job_finder_app.smart_job_aggregator.usecase.jobApplication;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.*;
+import lk.job_finder_app.smart_job_aggregator.domain.models.enums.ApplicationStatus;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.CompanyRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobApplicationRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobPostRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
 import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.ResourceNotFoundException;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.GetAllJobApplicationsResults;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -45,37 +49,96 @@ public class JobApplicationUseCaseImpl implements JobApplicationUseCase {
 
     //get all job applications
     @Override
-    public List<JobApplicationAggregate> getAllJobApplications(){
+    public List<GetAllJobApplicationsResults> getAllJobApplications(){
         return jobApplicationRepository.getAllJobApplications().stream()
                 .map(jobApplication -> {
                     Company company = getCompanyDetailsById(jobApplication.getCompanyId());
                     JobPost jobPost = getJobPostDetailsById(jobApplication.getJobPostId());
                     User user = getUserDetailsById(jobApplication.getUserId());
 
-                    return new JobApplicationAggregate(company,jobApplication, jobPost, user);
+                    return new GetAllJobApplicationsResults(
+                            company.getCompanyId().toString(),
+                            company.getCompanyName(),
+                            company.getCompanyIndustry(),
+                            company.getCompanyRating().toString(),
+
+                            jobApplication.getJobApplicationId().toString(),
+                            jobApplication.getResumeUrl(),
+                            jobApplication.getMatchScore(),
+                            jobApplication.getApplicationStatus().toString(),
+                            jobApplication.getAppliedAt().toString(),
+
+                            jobPost.getPostId().toString(),
+                            jobPost.getPostTitle(),
+                            jobPost.getPostDescription(),
+                            jobPost.getPostSalary().toString(),
+                            jobPost.getCreatedAt().toString(),
+                            jobPost.getJobStatus().toString(),
+                            jobPost.getSkillsRequired(),
+
+                            user.getUserId().toString(),
+                            user.getUserName(),
+                            user.getUserEmail(),
+                            user.getRole().toString()
+
+                    );
                 }).toList();
     }
 
     //create job application
     @Override
-    public JobApplicationAggregate applyForJob(JobApplication jobApplication){
+    public ApplyJobResult applyForJob(ApplyJobCommand applyJobCommand){
+
         //validate using helper methods (JOB-POST, COMPANY, USER)
-        JobPost jobPost = getJobPostDetailsById(jobApplication.getJobPostId());
+        JobPost jobPost = getJobPostDetailsById(applyJobCommand.jobPostId());
         Company company = getCompanyDetailsById(jobPost.getCompanyId());
-        User user = getUserDetailsById(jobApplication.getUserId());
+        User user = getUserDetailsById(applyJobCommand.userId());
 
-        jobApplication.setCompanyId(jobPost.getCompanyId());
+        LocalDateTime currentTime = LocalDateTime.now();
 
-        //set date and time, default status
-        jobApplication.setAppliedAt(LocalDateTime.now());
-        jobApplication.jobApplicationDefaultStatus();
+        //create new application through domain
+        JobApplication createNewJobApplication = JobApplication.createNewJobApplication(
+                applyJobCommand.resumeUrl(),
+                0.0,
+                ApplicationStatus.PENDING,
+                currentTime,
+                user.getUserId(),
+                jobPost.getPostId(),
+                company.getCompanyId()
+        );
+        //calculate matching score
+        createNewJobApplication.calculateMatchScore(
+                user.getSkillsRequired(),
+                jobPost.getSkillsRequired()
+        );
 
-        //call matching score method
-        jobApplication.calculateMatchScore(user.getSkillsRequired(), jobPost.getSkillsRequired());
+        JobApplication savedJobApplication = jobApplicationRepository.applyForJob(createNewJobApplication);
 
-        JobApplication savedJobApplication = jobApplicationRepository.applyForJob(jobApplication);
+        return new ApplyJobResult(
+                savedJobApplication.getCompanyId().toString(),
+                company.getCompanyName(),
+                company.getCompanyIndustry(),
+                company.getCompanyRating().toString(),
 
-        return new JobApplicationAggregate(company,savedJobApplication, jobPost, user);
+                savedJobApplication.getJobApplicationId().toString(),
+                savedJobApplication.getResumeUrl(),
+                savedJobApplication.getMatchScore(),
+                savedJobApplication.getApplicationStatus().toString(),
+                savedJobApplication.getAppliedAt().toString(),
+
+                savedJobApplication.getJobPostId().toString(),
+                jobPost.getPostTitle(),
+                jobPost.getPostDescription(),
+                jobPost.getPostSalary().toString(),
+                jobPost.getCreatedAt().toString(),
+                jobPost.getJobStatus().toString(),
+                jobPost.getSkillsRequired(),
+
+                savedJobApplication.getUserId().toString(),
+                user.getUserName(),
+                user.getUserEmail(),
+                user.getRole().toString()
+        );
     }
 
     //update job application
