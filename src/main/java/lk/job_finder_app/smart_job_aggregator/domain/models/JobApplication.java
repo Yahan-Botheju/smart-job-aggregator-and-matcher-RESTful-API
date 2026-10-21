@@ -1,7 +1,9 @@
 package lk.job_finder_app.smart_job_aggregator.domain.models;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.ApplicationStatus;
+import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.MethodArgumentNotValidException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -27,37 +29,26 @@ public class JobApplication {
         this.companyId = companyId;
     }
 
-    public Long getJobApplicationId() {
-        return jobApplicationId;
+    public Long getJobApplicationId() { return jobApplicationId; }
+    public String getResumeUrl() { return resumeUrl; }
+    public double getMatchScore() { return matchScore; }
+    public ApplicationStatus getApplicationStatus() { return applicationStatus; }
+    public LocalDateTime getAppliedAt() { return appliedAt; }
+    public Long getUserId() { return userId; }
+    public Long getJobPostId() { return jobPostId; }
+    public Long getCompanyId() { return companyId; }
+
+    /* __DOMAIN_LOGICS__ */
+
+    //set company Id on application
+    public void setCompanyIdOnPost(Long companyId, LocalDateTime currentTime) {
+        if(companyId == null) {
+            throw new MethodArgumentNotValidException("companyId is cannot be mepty");
+        }
+        this.companyId = companyId;
+        this.appliedAt = currentTime;
     }
 
-    public String getResumeUrl() {
-        return resumeUrl;
-    }
-
-    public double getMatchScore() {
-        return matchScore;
-    }
-
-    public ApplicationStatus getApplicationStatus() {
-        return applicationStatus;
-    }
-
-    public LocalDateTime getAppliedAt() {
-        return appliedAt;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public Long getJobPostId() {
-        return jobPostId;
-    }
-
-    public Long getCompanyId() {
-        return companyId;
-    }
 
     //job application default status
     public void jobApplicationDefaultStatus() {
