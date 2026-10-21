@@ -2,10 +2,10 @@ package lk.job_finder_app.smart_job_aggregator.web.jobApplication.webMappers;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobApplication;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobApplicationAggregate;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.GetAllJobApplicationsResults;
-import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.GetAllJobApplicationsResponseDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationRequestDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.*;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -37,4 +37,13 @@ public interface JobApplicationWebMapper {
 
     //to response
     GetAllJobApplicationsResponseDTO toGetAllJobApplicationsResponseDTO(GetAllJobApplicationsResults getAllJobApplicationsResults);
+
+
+    /* __APPLY_JOB__ */
+
+    //to command
+    ApplyJobCommand toApplyJobCommand(ApplyJobRequestDTO applyJobRequestDTO);
+
+    //to response
+    ApplyJobResponseDTO toApplyJobResponseDTO(ApplyJobResult applyJobResult);
 }
