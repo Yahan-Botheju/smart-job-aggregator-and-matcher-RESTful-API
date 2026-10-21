@@ -6,10 +6,10 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.JobApplicationAggreg
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.JobApplicationUseCase;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.GetAllJobApplicationsResults;
-import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.GetAllJobApplicationsResponseDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationRequestDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.*;
 import lk.job_finder_app.smart_job_aggregator.web.jobApplication.webMappers.JobApplicationWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
 import lombok.RequiredArgsConstructor;
@@ -50,12 +50,12 @@ public class JobApplicationController {
     //create job application
     @PostMapping("/apply")
     @Authorize({RoleName.ADMIN, RoleName.USER})
-    public ResponseEntity<StandardResponse<JobApplicationResponseDTO>> applyForJob(
-            @Valid  @RequestBody JobApplicationRequestDTO jobApplicationRequestDTO
+    public ResponseEntity<StandardResponse<ApplyJobResponseDTO>> applyForJob(
+            @Valid  @RequestBody ApplyJobRequestDTO applyJobRequestDTO
     ){
-        JobApplication toDomainModel = jobApplicationWebMapper.toDomainModel(jobApplicationRequestDTO);
-        JobApplicationAggregate jobApplicationAggregate = jobApplicationUseCase.applyForJob(toDomainModel);
-        JobApplicationResponseDTO responseDTO = jobApplicationWebMapper.aggregatorResponseDTO(jobApplicationAggregate);
+        ApplyJobCommand toCommand = jobApplicationWebMapper.toApplyJobCommand(applyJobRequestDTO);
+        ApplyJobResult toResult = jobApplicationUseCase.applyForJob(toCommand);
+        ApplyJobResponseDTO responseDTO = jobApplicationWebMapper.toApplyJobResponseDTO(toResult);
 
         return ResponseEntity.created(URI.create("/api/v1/job-applications/" + responseDTO.getJobApplicationId()))
                 .body(new StandardResponse<>(
