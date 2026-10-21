@@ -88,12 +88,6 @@ public class JobApplication {
 
     /* __DOMAIN_LOGICS__ */
 
-    //job application default status
-    public void jobApplicationDefaultStatus() {
-        if (this.applicationStatus == null) {
-            this.applicationStatus = ApplicationStatus.PENDING;
-        }
-    }
 
     //create method for calculate matching score
     public void calculateMatchScore(
