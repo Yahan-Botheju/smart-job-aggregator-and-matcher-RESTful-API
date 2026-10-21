@@ -6,6 +6,8 @@ import lk.job_finder_app.smart_job_aggregator.domain.models.JobApplicationAggreg
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.JobApplicationUseCase;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.GetAllJobApplicationsResults;
+import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.GetAllJobApplicationsResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationRequestDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.JobApplicationResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobApplication.webMappers.JobApplicationWebMapper;
@@ -23,21 +25,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JobApplicationController {
 
-    //inject web mapper
+    //inject required dependencies
     private final JobApplicationWebMapper  jobApplicationWebMapper;
-
-    //inject use case
     private final JobApplicationUseCase jobApplicationUseCase;
 
 
     //get all job applications
     @GetMapping
     @Authorize(RoleName.ADMIN)
-    public ResponseEntity<StandardResponse<List<JobApplicationResponseDTO>>> getAllJobApplications(){
-        List<JobApplicationAggregate> jobApplications = jobApplicationUseCase.getAllJobApplications();
+    public ResponseEntity<StandardResponse<List<GetAllJobApplicationsResponseDTO>>> getAllJobApplications(){
 
-        List<JobApplicationResponseDTO> responseDTOS = jobApplications.stream()
-                .map(jobApplicationWebMapper::aggregatorResponseDTO).toList();
+        List<GetAllJobApplicationsResults> jobApplications = jobApplicationUseCase.getAllJobApplications();
+        List<GetAllJobApplicationsResponseDTO> responseDTOS = jobApplications.stream()
+                .map(jobApplicationWebMapper::toGetAllJobApplicationsResponseDTO).toList();
 
         return ResponseEntity.ok(new StandardResponse<>(
                 200,
