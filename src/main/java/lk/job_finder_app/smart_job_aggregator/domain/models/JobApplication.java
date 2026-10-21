@@ -29,26 +29,64 @@ public class JobApplication {
         this.companyId = companyId;
     }
 
-    public Long getJobApplicationId() { return jobApplicationId; }
-    public String getResumeUrl() { return resumeUrl; }
-    public double getMatchScore() { return matchScore; }
-    public ApplicationStatus getApplicationStatus() { return applicationStatus; }
-    public LocalDateTime getAppliedAt() { return appliedAt; }
-    public Long getUserId() { return userId; }
-    public Long getJobPostId() { return jobPostId; }
-    public Long getCompanyId() { return companyId; }
-
-    /* __DOMAIN_LOGICS__ */
-
-    //set company Id on application
-    public void setCompanyIdOnPost(Long companyId, LocalDateTime currentTime) {
-        if(companyId == null) {
-            throw new MethodArgumentNotValidException("companyId is cannot be mepty");
-        }
-        this.companyId = companyId;
-        this.appliedAt = currentTime;
+    public Long getJobApplicationId() {
+        return jobApplicationId;
     }
 
+    public String getResumeUrl() {
+        return resumeUrl;
+    }
+
+    public double getMatchScore() {
+        return matchScore;
+    }
+
+    public ApplicationStatus getApplicationStatus() {
+        return applicationStatus;
+    }
+
+    public LocalDateTime getAppliedAt() {
+        return appliedAt;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public Long getJobPostId() {
+        return jobPostId;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    /* __FACTORY_METHOD__ */
+
+    public static JobApplication createNewJobApplication(
+            String resumeUrl,
+            double matchScore,
+            ApplicationStatus applicationStatus,
+            LocalDateTime appliedAt,
+            Long userId,
+            Long jobPostId,
+            Long companyId
+    ) {
+        return new JobApplication(
+               null,
+                resumeUrl,
+                matchScore,
+                applicationStatus,
+                appliedAt,
+                userId,
+                jobPostId,
+                companyId
+        );
+    }
+
+
+
+    /* __DOMAIN_LOGICS__ */
 
     //job application default status
     public void jobApplicationDefaultStatus() {
@@ -62,11 +100,11 @@ public class JobApplication {
             Set<String> userSkills,
             Set<String> requiredJobSkills
     ) {
-        if(userSkills == null || userSkills.isEmpty() ||requiredJobSkills == null || requiredJobSkills.isEmpty()) {
+        if (userSkills == null || userSkills.isEmpty() || requiredJobSkills == null || requiredJobSkills.isEmpty()) {
             this.matchScore = 0.0;
             return;
         }
         long matchCount = userSkills.stream().filter(requiredJobSkills::contains).count();
-        this.matchScore = (((double)  matchCount) /  requiredJobSkills.size()) * 100;
+        this.matchScore = (((double) matchCount) / requiredJobSkills.size()) * 100;
     }
 }
