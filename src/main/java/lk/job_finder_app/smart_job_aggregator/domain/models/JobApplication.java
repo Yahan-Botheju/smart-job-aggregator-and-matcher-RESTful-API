@@ -84,7 +84,27 @@ public class JobApplication {
         );
     }
 
+    /* __UPDATE_JOB_APPLICATION__ */
 
+    public void updateJobApplication(
+            Long jobApplicationId,
+            String resumeUrl,
+            double matchScore,
+            ApplicationStatus applicationStatus,
+            LocalDateTime appliedAt,
+            Long userId,
+            Long jobPostId,
+            Long companyId
+    ){
+        this.jobApplicationId = jobApplicationId;
+        this.resumeUrl = resumeUrl;
+        this.matchScore = matchScore;
+        this.applicationStatus = applicationStatus;
+        this.appliedAt = appliedAt;
+        this.userId = userId;
+        this.jobPostId = jobPostId;
+        this.companyId = companyId;
+    }
 
     /* __DOMAIN_LOGICS__ */
 
