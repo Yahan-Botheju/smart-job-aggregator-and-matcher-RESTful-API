@@ -2,12 +2,13 @@ package lk.job_finder_app.smart_job_aggregator.web.user.controllers;
 
 import jakarta.validation.Valid;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
-import lk.job_finder_app.smart_job_aggregator.domain.models.User;
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.JobPostUseCase;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.user.UserUseCase;
 import lk.job_finder_app.smart_job_aggregator.usecase.user.records.*;
+import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.GetAllPostsResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers.JobPostWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
@@ -110,11 +111,12 @@ public class UserController {
     //use job post matching method
     @GetMapping("/{userId}/recommendations")
     @Authorize({RoleName.USER, RoleName.ADMIN})
-    public ResponseEntity<StandardResponse<List<JobPostResponseDTO>>> getRecommendedJobPostsForUser(
+    public ResponseEntity<StandardResponse<List<GetAllPostsResponseDTO>>> getRecommendedJobPostsForUser(
             @PathVariable Long userId
     ){
-        List<JobPostWithCompanyAggregate> jobPosts = jobPostUseCase.getRecommendedJobsForUser(userId);
-        List<JobPostResponseDTO> responseDTO = jobPosts.stream().map(jobPostWebMapper::customResponseDTO).toList();
+        List<GetAllPostsResult> allPostsResults = jobPostUseCase.getAllJobPosts();
+        List<GetAllPostsResponseDTO> responseDTO = allPostsResults.stream()
+                .map(jobPostWebMapper::toGetAllPostsResult).toList();
 
         return ResponseEntity.ok(new StandardResponse<>(
                 200,

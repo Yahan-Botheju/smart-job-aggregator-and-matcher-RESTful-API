@@ -16,5 +16,5 @@ public interface JobApplicationRepository {
     JobApplication applyForJob(JobApplication jobApplication);
 
     //update job application
-    JobApplication updateJobApplication(Long jobApplicationId, JobApplication jobApplication);
+    JobApplication updateJobApplication(JobApplication jobApplication);
 }
