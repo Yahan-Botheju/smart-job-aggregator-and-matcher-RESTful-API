@@ -1,14 +1,10 @@
 package lk.job_finder_app.smart_job_aggregator.web.jobApplication.controllers;
 
 import jakarta.validation.Valid;
-import lk.job_finder_app.smart_job_aggregator.domain.models.JobApplication;
-import lk.job_finder_app.smart_job_aggregator.domain.models.JobApplicationAggregate;
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.JobApplicationUseCase;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.GetAllJobApplicationsResults;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.*;
 import lk.job_finder_app.smart_job_aggregator.web.jobApplication.DTOs.*;
 import lk.job_finder_app.smart_job_aggregator.web.jobApplication.webMappers.JobApplicationWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
@@ -69,13 +65,14 @@ public class JobApplicationController {
     //update job application
     @PutMapping("/{jobApplicationId}")
     @Authorize({RoleName.ADMIN, RoleName.USER})
-    public ResponseEntity<StandardResponse<JobApplicationResponseDTO>> updateJobApplication(
+    public ResponseEntity<StandardResponse<UpdateJobApplicationResponseDTO>> updateJobApplication(
             @PathVariable Long jobApplicationId,
-            @Valid @RequestBody JobApplicationRequestDTO jobApplicationRequestDTO
+            @Valid @RequestBody UpdateJobApplicationRequestDTO updateJobApplicationRequestDTO
     ){
-        JobApplication toDomainModel = jobApplicationWebMapper.toDomainModel(jobApplicationRequestDTO);
-        JobApplicationAggregate jobApplicationAggregate = jobApplicationUseCase.updateJobApplication(jobApplicationId, toDomainModel);
-        JobApplicationResponseDTO responseDTO = jobApplicationWebMapper.aggregatorResponseDTO(jobApplicationAggregate);
+        UpdateJobApplicationCommand toCommand = jobApplicationWebMapper
+                .toUpdateJobApplicationCommand(jobApplicationId, updateJobApplicationRequestDTO);
+        UpdateJobApplicationResult toResult = jobApplicationUseCase.updateJobApplication(toCommand);
+        UpdateJobApplicationResponseDTO responseDTO = jobApplicationWebMapper.toUpdateJobApplicationResponseDTO(toResult);
 
         return ResponseEntity.ok(new StandardResponse<>(
                 200,
