@@ -7,9 +7,7 @@ import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobApplication
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobPostRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
 import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.ResourceNotFoundException;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobCommand;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.ApplyJobResult;
-import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.GetAllJobApplicationsResults;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobApplication.records.*;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -143,20 +141,37 @@ public class JobApplicationUseCaseImpl implements JobApplicationUseCase {
 
     //update job application
     @Override
-    public JobApplicationAggregate updateJobApplication(
-            Long jobApplicationId,
-            JobApplication jobApplication
-    ){
-        jobApplicationRepository.jobApplicationFindById(jobApplicationId)
-                .orElseThrow(() -> new ResourceNotFoundException("Job Application Not Found" + " , " + jobApplicationId));
+    public UpdateJobApplicationResult updateJobApplication(UpdateJobApplicationCommand updateJobApplicationCommand){
 
-        JobApplication savedJobApplication = jobApplicationRepository.updateJobApplication(jobApplicationId, jobApplication);
+        JobApplication jobApplication = jobApplicationRepository
+                .jobApplicationFindById(updateJobApplicationCommand.jobApplicationId())
+                .orElseThrow(() -> new ResourceNotFoundException("Job Application Not Found" + " , " + updateJobApplicationCommand.jobApplicationId()));
 
-        JobPost jobPost = getJobPostDetailsById(savedJobApplication.getJobPostId());
-        Company company = getCompanyDetailsById(savedJobApplication.getCompanyId());
-        User user = getUserDetailsById(savedJobApplication.getUserId());
+        //update through domain model
+        jobApplication.updateJobApplication(
+                jobApplication.getJobApplicationId(),
+                updateJobApplicationCommand.resumeUrl(),
+                jobApplication.getMatchScore(),
+                jobApplication.getApplicationStatus(),
+                jobApplication.getAppliedAt(),
+                updateJobApplicationCommand.userId(),
+                updateJobApplicationCommand.jobPostId(),
+                jobApplication.getCompanyId()
+        );
 
-        return new JobApplicationAggregate(company,jobApplication, jobPost, user);
+        JobApplication savedJobApplication = jobApplicationRepository
+                .updateJobApplication(jobApplication);
+
+        return new UpdateJobApplicationResult(
+                savedJobApplication.getJobApplicationId().toString(),
+                savedJobApplication.getResumeUrl(),
+                savedJobApplication.getMatchScore(),
+                savedJobApplication.getApplicationStatus().toString(),
+                savedJobApplication.getAppliedAt().toString(),
+                savedJobApplication.getUserId().toString(),
+                savedJobApplication.getJobPostId().toString(),
+                savedJobApplication.getCompanyId().toString()
+        );
     }
 
 }
