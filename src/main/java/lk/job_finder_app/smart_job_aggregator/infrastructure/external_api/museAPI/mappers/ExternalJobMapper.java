@@ -16,20 +16,18 @@ public class ExternalJobMapper {
     public JobPost toDomain(
             ExternalJobResponseDTO.TheMuseJob theMuseJob
     ) {
-        JobPost jobPost = new JobPost();
-
-        jobPost.setPostId(-1L);
-        jobPost.setPostTitle(theMuseJob.name());
-
         String removeTags = theMuseJob.contents().replaceAll("<[^>]*>", "");
-        jobPost.setPostDescription(removeTags);
+        JobPost externalJobPost = new JobPost(
+                -1L,
+                theMuseJob.name(),
+                removeTags,
+                BigDecimal.ZERO,
+                LocalDate.now(),
+                JobStatus.ACTIVE,
+                new HashSet<>(),
+                0L
+        );
 
-        jobPost.setJobStatus(JobStatus.ACTIVE);
-        jobPost.setCreatedAt(LocalDate.now());
-        jobPost.setSkillsRequired(new HashSet<>());
-        jobPost.setPostSalary(BigDecimal.ZERO);
-        jobPost.setCompanyId(0L);
-
-        return jobPost;
+        return externalJobPost;
     }
 }
