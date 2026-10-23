@@ -2,7 +2,6 @@ package lk.job_finder_app.smart_job_aggregator.usecase.jobPost;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.Company;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPost;
-import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
 import lk.job_finder_app.smart_job_aggregator.domain.models.User;
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.JobStatus;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.CompanyRepository;
@@ -19,7 +18,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

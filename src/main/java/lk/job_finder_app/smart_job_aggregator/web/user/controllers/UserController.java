@@ -1,19 +1,15 @@
 package lk.job_finder_app.smart_job_aggregator.web.user.controllers;
 
 import jakarta.validation.Valid;
-import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
-import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.JobPostUseCase;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.MultiJobsRecommendedCommand;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.MultiJobsRecommendedResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.user.UserUseCase;
 import lk.job_finder_app.smart_job_aggregator.usecase.user.records.*;
-import lk.job_finder_app.smart_job_aggregator.web.company.DTOs.GetAllCompaniesResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.GetAllPostsResponseDTO;
-import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.MultiJobPostResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers.JobPostWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
