@@ -1,4 +1,4 @@
-package lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs;
+package lk.job_finder_app.smart_job_aggregator.web.external_api.DTOs;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,8 +1,8 @@
-package lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.mappers;
+package lk.job_finder_app.smart_job_aggregator.web.external_api.mappers;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPost;
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.JobStatus;
-import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs.ExternalJobResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.web.external_api.DTOs.ExternalJobResponseDTO;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

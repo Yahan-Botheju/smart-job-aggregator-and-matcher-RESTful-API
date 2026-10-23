@@ -8,9 +8,9 @@ import lk.job_finder_app.smart_job_aggregator.domain.repositories.CompanyReposit
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobPostRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
 import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.MethodArgumentNotValidException;
-import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs.ExternalJobResponseDTO;
-import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.client.TheMuseClient;
-import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.mappers.ExternalJobMapper;
+import lk.job_finder_app.smart_job_aggregator.web.external_api.DTOs.ExternalJobResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.usecase.external_api.museAPI.client.TheMuseClient;
+import lk.job_finder_app.smart_job_aggregator.web.external_api.mappers.ExternalJobMapper;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;

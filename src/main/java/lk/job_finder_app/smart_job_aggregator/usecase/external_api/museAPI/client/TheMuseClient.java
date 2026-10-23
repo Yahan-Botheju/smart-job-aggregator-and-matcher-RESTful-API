@@ -1,6 +1,6 @@
-package lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.client;
+package lk.job_finder_app.smart_job_aggregator.usecase.external_api.museAPI.client;
 
-import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs.ExternalJobResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.web.external_api.DTOs.ExternalJobResponseDTO;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
