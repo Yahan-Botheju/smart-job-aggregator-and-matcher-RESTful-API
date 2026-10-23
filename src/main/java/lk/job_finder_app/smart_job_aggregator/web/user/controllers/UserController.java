@@ -4,12 +4,17 @@ import jakarta.validation.Valid;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.RoleName;
 import lk.job_finder_app.smart_job_aggregator.globalResponseHandler.StandardResponse;
+import lk.job_finder_app.smart_job_aggregator.usecase.company.records.GetAllCompaniesResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.JobPostUseCase;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.GetAllPostsResult;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.MultiJobsRecommendedCommand;
+import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.MultiJobsRecommendedResult;
 import lk.job_finder_app.smart_job_aggregator.usecase.user.UserUseCase;
 import lk.job_finder_app.smart_job_aggregator.usecase.user.records.*;
+import lk.job_finder_app.smart_job_aggregator.web.company.DTOs.GetAllCompaniesResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.GetAllPostsResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.JobPostResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.web.jobPost.DTOs.MultiJobPostResponseDTO;
 import lk.job_finder_app.smart_job_aggregator.web.jobPost.webMappers.JobPostWebMapper;
 import lk.job_finder_app.smart_job_aggregator.web.security.Authorize;
 import lk.job_finder_app.smart_job_aggregator.web.user.DTOs.*;
@@ -129,11 +134,13 @@ public class UserController {
     //get multisource data related to use skills
     @GetMapping("recommendations/{userId}/multi-source")
     @Authorize({RoleName.USER,  RoleName.ADMIN})
-    public ResponseEntity<StandardResponse<List<JobPostResponseDTO>>> getMultiSourceRecommendations(
+    public ResponseEntity<StandardResponse<List<MultiJobPostResponseDTO>>> getMultiSourceRecommendations(
             @PathVariable Long userId
     ){
-        List<JobPostWithCompanyAggregate> threadJobPost = jobPostUseCase.getMultiSourceRecommendations(userId);
-        List<JobPostResponseDTO> responseDTO = threadJobPost.stream().map(jobPostWebMapper::customResponseDTO).toList();
+        MultiJobsRecommendedCommand toCommand = jobPostWebMapper.toMultiJobsRecommendedCommand(userId);
+        List<MultiJobsRecommendedResult> toResult = jobPostUseCase.getMultiSourceRecommendations(toCommand);
+        List<MultiJobPostResponseDTO> responseDTO = toResult.stream()
+                .map(jobPostWebMapper::toMultiJobPostResponseDTO).toList();
 
         return ResponseEntity.ok(new StandardResponse<>(
                 200,
@@ -141,7 +148,6 @@ public class UserController {
                 LocalDateTime.now(),
                 responseDTO
         ));
-
 
     }
 
