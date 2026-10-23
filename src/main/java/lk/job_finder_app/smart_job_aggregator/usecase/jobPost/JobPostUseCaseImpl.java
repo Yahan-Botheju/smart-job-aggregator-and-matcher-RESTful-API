@@ -2,16 +2,15 @@ package lk.job_finder_app.smart_job_aggregator.usecase.jobPost;
 
 import lk.job_finder_app.smart_job_aggregator.domain.models.Company;
 import lk.job_finder_app.smart_job_aggregator.domain.models.JobPost;
-import lk.job_finder_app.smart_job_aggregator.domain.models.JobPostWithCompanyAggregate;
 import lk.job_finder_app.smart_job_aggregator.domain.models.User;
 import lk.job_finder_app.smart_job_aggregator.domain.models.enums.JobStatus;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.CompanyRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.JobPostRepository;
 import lk.job_finder_app.smart_job_aggregator.domain.repositories.UserRepository;
 import lk.job_finder_app.smart_job_aggregator.globalExceptionHandler.superClasses.MethodArgumentNotValidException;
-import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.DTOs.ExternalJobResponseDTO;
-import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.client.TheMuseClient;
-import lk.job_finder_app.smart_job_aggregator.infrastructure.external_api.museAPI.mappers.ExternalJobMapper;
+import lk.job_finder_app.smart_job_aggregator.web.external_api.DTOs.ExternalJobResponseDTO;
+import lk.job_finder_app.smart_job_aggregator.usecase.external_api.museAPI.client.TheMuseClient;
+import lk.job_finder_app.smart_job_aggregator.web.external_api.mappers.ExternalJobMapper;
 import lk.job_finder_app.smart_job_aggregator.usecase.jobPost.records.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -19,7 +18,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
