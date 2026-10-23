@@ -39,4 +39,12 @@ public interface JobPostWebMapper {
 
     //to response
     GetUserRecommendedJobsResponseDTO toGetUserRecommendedJobsResponseDTO(GetUserRecommendedJobResult  getUserRecommendedJobResult);
+
+    /* __MULTISOURCE_JOB_RECOMMENDATION__ */
+
+    //to command
+    MultiJobsRecommendedCommand toMultiJobsRecommendedCommand(Long userId);
+
+    //to response
+    MultiJobPostResponseDTO toMultiJobPostResponseDTO(MultiJobsRecommendedResult multiJobsRecommendedResult);
 }
